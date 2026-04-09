@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>SoFix Budget</title>
+  <script src="./scripts/config.js" defer></script>
+  <script src="./scripts/salaire.js" defer></script>
+  <script src="./scripts/depenses.js" defer></script>
+</head>
+<body>
+    <h1>Calculateur de budget</h1>
+    
+    <!-- PARTIE REVENUS -->
+    <div class="zoneRevenus">
+        <div class="zoneSaise">
+            <label> Salaire Sophie : </label>
+            <input type="number" id="salaireSophie" name="salaireSophie" /><br />
+            <label> Salaire Félix : </label>
+            <input type="number" id="salaireFelix" name="salaireFelix" /><br />
+        </div>
+        <div id="prorata">
+        </div>
+    </div>
+
+    <!-- PARTIE DEPENSES -->
+    <div class="zoneDepenses">
+        <div id="assurance">
+            <h2>
+                Assurances
+            </h2>
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Libellé</th>
+                            <th>Montant</th>
+                            <th>Charge</th>
+                            <th>Compte</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabEntreesAssurances"></tbody>
+                </table>
+            </div>
+        </div>
+        <div id =>
+
+        </div>
+    </div>
+  
+
+  <input type="file" id="inputFichier" accept=".json,application/json" style="display:none">
+
+  <h2>Résultat</h2>
+  <div id="resultat"></div>
+</body>
+</html>
