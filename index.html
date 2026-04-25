@@ -3,13 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <title>SoFix Budget</title>
-  <script src="./scripts/config.js" defer></script>
+  <!-- <script src="./scripts/config.js" defer></script> -->
   <script src="./scripts/salaire.js" defer></script>
   <script src="./scripts/depenses.js" defer></script>
 </head>
 <body>
     <h1>Calculateur de budget</h1>
-    
+    <!-- Chargement fichier -->
+    <input type="file" id="jsonFileInput" accept=".json,application/json">
+    <br/>
+    <br/>
     <!-- PARTIE REVENUS -->
     <div class="zoneRevenus">
         <div class="zoneSaise">
@@ -24,33 +27,34 @@
 
     <!-- PARTIE DEPENSES -->
     <div class="zoneDepenses">
-        <div id="assurance">
-            <h2>
-                Assurances
-            </h2>
-            <div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Libellé</th>
-                            <th>Montant</th>
-                            <th>Charge</th>
-                            <th>Compte</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabEntreesAssurances"></tbody>
-                </table>
-            </div>
-        </div>
-        <div id =>
-
-        </div>
     </div>
-  
-
-  <input type="file" id="inputFichier" accept=".json,application/json" style="display:none">
-
-  <h2>Résultat</h2>
-  <div id="resultat"></div>
 </body>
 </html>
+
+<script>
+    let data = null;
+document.getElementById('jsonFileInput').addEventListener('change', function (event) {
+    
+    const fichier = event.target.files[0];
+    if (!fichier) return;
+
+    const lecteur = new FileReader();
+
+    lecteur.onload = function (e) {
+        try {
+            data = JSON.parse(e.target.result);
+            console.log('Objet JSON chargé :', data);
+            creerZonesDepenses()
+            // Exemple d'utilisation :
+            // console.log(donneesJson.nom);
+            // console.log(donneesJson.utilisateurs[0]);
+        } catch (erreur) {
+            console.error('Le fichier JSON est invalide :', erreur);
+        }
+    };
+
+    lecteur.readAsText(fichier);
+
+
+});
+</script>
