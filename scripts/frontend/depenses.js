@@ -49,6 +49,7 @@ function afficherContenu(idAAfficher){
             <th>Montant</th>
             <th>Charge</th>
             <th>Compte</th>
+            <th></th>
         <tr>`
 
     //insertion dans le tableau de la ligne de titre
@@ -68,6 +69,7 @@ function afficherContenu(idAAfficher){
             <td>${entrees.montant.toFixed(2)} €</td>
             <td>${rechLibelle(data.listeCharge, entrees.idCharge)}</td>
             <td>${rechLibelle(data.listeComptes, entrees.idComptePayeDepuis)}</td>
+            <td><button class="addDep"><i data-lucide="circle-x"></i></button></td>
         `
         //Ajout de la ligné créée
         tabCorps.appendChild(ligne)
@@ -76,6 +78,7 @@ function afficherContenu(idAAfficher){
     afficherInputEntree(cat, tabCorps)
     tab.appendChild(tabCorps)
     zone.appendChild(tab)
+    lucide.createIcons()
 }
 
 function masquerContenu(idAMasquer){
@@ -147,6 +150,10 @@ function afficherInputEntree(categorie, zone){
                 ${optionsComptes}
             </select>
         </td>
+            <button class="suppDep">
+                <i data-lucide="circle-plus"></i>
+            </button>
+        <td>
     `
     zone.appendChild(ligne)
 }

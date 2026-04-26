@@ -16,3 +16,23 @@
     width: 15px;
     height: 15px;
 }
+
+.suppDep{
+    border: 0cm;
+    background-color: transparent;
+}
+
+.suppDep svg{
+    width: 15px;
+    height: 15px;
+}
+
+.addDep{
+    border: 0cm;
+    background-color: transparent;
+}
+
+.addDep svg{
+    width: 15px;
+    height: 15px;
+}
