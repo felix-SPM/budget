@@ -76,7 +76,7 @@ function afficherContenu(idAAfficher){
 }
 
 function masquerContenu(idAMasquer){
-    // Récupération du div dans lequel insérer le contenu
+    // Récupération du div dans lequel supprimer le contenu
     const zone = document.querySelector("#"+idAMasquer+" .contenu")
 
     // Suppression de ce qui s'y trouve
@@ -87,14 +87,18 @@ function creerZonesDepenses()
 {
     //Récupération de l'objet DOM correspondant aux dépenses
     const zone = document.querySelector("div.zoneDepenses")
+    // Suppression au cas où
     zone.innerHTML=''
 
+    // Parcours de toutes les catégories
     data.categories.forEach(entrees => {
-        //création d'un div
+        // Création d'un div
         const bloc = document.createElement('div')
-        //remplissage
+        // Remplissage
         bloc.id = entrees.nom
+        // Ajout d'une class depense
         bloc.classList.add("depense")
+        
         bloc.innerHTML = `
             <h2>
                 ${entrees.nom}
