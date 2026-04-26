@@ -11,14 +11,17 @@ parentClick.addEventListener("click", (event) => {
     // On déclare la variable contenant le div avec la classe dépense à laquelle le bouton appartient
     const depense = button.closest('.depense');
 
-    if (button.value==="Afficher"){
+    if (button.value==="masq"){
         afficherContenu(depense.id)
-        button.value="Masquer"
+        button.value="affi"
+        button.innerHTML='<i data-lucide="square-minus"></i>'
     }
     else{
         masquerContenu(depense.id)
-        button.value = "Afficher"
+        button.value="masq"
+        button.innerHTML='<i data-lucide="square-plus"></i>'
     }
+    lucide.createIcons()
 })
 
 // La fonction reçoit en entrée le nom de la catégorie
@@ -102,13 +105,17 @@ function creerZonesDepenses()
         bloc.innerHTML = `
             <h2>
                 ${entrees.nom}
-                <input class="boutonAffMasq" id="bouton${entrees.nom}" type="button" value="Afficher"/>
+                <!--<input class="boutonAffMasq" id="bouton${entrees.nom}" type="button" value="Afficher"/>-->
+                <button class="boutonAffMasq" value="masq">
+                    <i data-lucide="square-plus"></i>
+                </button>
             </h2>
             <div class="contenu">
             </div>
         `
         zone.appendChild(bloc)
     })
+    lucide.createIcons()
 }
 
 function afficherInputEntree(categorie, zone){
