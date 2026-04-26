@@ -3,13 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <title>SoFix Budget</title>
-  <script src="./scripts/frontend/init.js" defer></script> -->
+  <link href="./style/icon.css" rel="stylesheet" />
+  <script src="./scripts/frontend/init.js" defer></script>
   <script src="./scripts/frontend/salaire.js" defer></script>
   <script src="./scripts/frontend/depenses.js" defer></script>
   <script src="./scripts/backend/donnees.js" defer></script>
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js" defer></script>
+  <script src="./scripts/backend/icon.js" defer></script>
 </head>
 <body>
-    <h1>Calculateur de budget</h1>
+    <h1 class="titreApp">Calculateur de budget <i data-lucide="badge-euro"></i></h1>
     <!-- Chargement fichier -->
     <input type="file" id="jsonFileInput" accept=".json,application/json">
     <br/>
