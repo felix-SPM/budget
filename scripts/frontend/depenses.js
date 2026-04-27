@@ -1,35 +1,36 @@
 // Déclaration de la variable contenant le div des dépenses
 const parentClick = document.querySelector('.zoneDepenses')
 
-
-
 // Fonction appelée lorsqu'un click survient dans le div des dépenses
 parentClick.addEventListener("click", (event) => {
-    // Déclaration de la variable qui va contenir le bouton cliqué ayant la class boutonAffMasq
+    // Déclaration de la variable qui va contenir le bouton cliqué
     const button = event.target.closest('.boutonAffMasq, .suppDep, .addDep')
-    // Si on ne trouve pas, on sort
+    // Si ça retourne null, la fonction s'arrête
     if (!button) return;
-
-    // On déclare la variable contenant le div avec la classe dépense à laquelle le bouton appartient
-    const depense = button.closest('.depense');
 
     // Tests pour savoir quel bouton est cliqué, et traitement
     if (button.classList.contains('boutonAffMasq')){
-        if (button.value==="masq"){
-            afficherContenu(depense.id)
-            button.value="affi"
+        // On déclare la variable contenant le div avec la classe dépense à laquelle le bouton appartient
+        const cat = button.closest('.categorieDepense');
+        if (button.dataset.action==="afficher"){
+            afficherContenu(Number(cat.dataset.idcategorie))
+            button.dataset.action="masquer"
             button.innerHTML='<i data-lucide="square-minus"></i>'
         }
         else{
-            masquerContenu(depense.id)
-            button.value="masq"
+            masquerContenu(Number(cat.dataset.idcategorie))
+            button.dataset.action="afficher"
             button.innerHTML='<i data-lucide="square-plus"></i>'
         }
         lucide.createIcons()
     }
 
+    const entree = button.closest('tr')
     if (button.classList.contains('suppDep')){
-        console.log("Supprimer dépense")
+        if (suppDepData(entree.dataset.identree, button.closest('div.categorieDepense').dataset.idcategorie)){
+            entree.remove()
+        }
+
     }
 
     if (button.classList.contains('addDep')){
@@ -40,16 +41,13 @@ parentClick.addEventListener("click", (event) => {
 // La fonction reçoit en entrée le nom de la catégorie
 // Elle doit afficher dans la zone correspondante en HTML
 // toutes les entrées inscrites dans data
-function afficherContenu(idAAfficher){
+function afficherContenu(idCategorie){
 
-    //Récupération de la catégorie à afficher
-    const cat = data.categories.find(e =>e.nom === idAAfficher)
-    
     // Récupération des entrées de la catégorie
-    const ent = data.entrees.find(e => e.id === cat.id)
-   
+    const ent = data.entrees.find(e => e.id === idCategorie)
+
     // Récupération du div dans lequel insérer le contenu
-    const zone = document.querySelector("#"+idAAfficher+" .contenu")
+    const zone = document.querySelector('[data-idcategorie="'+idCategorie+'"] .contenu')
 
     //Création du tableau
     const tab = document.createElement('table')
@@ -62,7 +60,7 @@ function afficherContenu(idAAfficher){
             <th>Montant</th>
             <th>Charge</th>
             <th>Compte</th>
-            <th></th>
+            <th>Actions</th>
         <tr>`
 
     //insertion dans le tableau de la ligne de titre
@@ -71,11 +69,13 @@ function afficherContenu(idAAfficher){
     //Création du corps du tableau
     const tabCorps = document.createElement('tbody')
     // Ajout de l'ID associé
-    tabCorps.id = "tabEntrees"+idAAfficher
+    //tabCorps.id = "tabEntrees"+idAAfficher
 
     ent.liste.forEach(entrees => {
         //création d'une ligne
         const ligne = document.createElement('tr')
+        // Association d'un paramètre data à l'ID de l'entrée
+        ligne.dataset.identree=entrees.id
         //Remplissage
         ligne.innerHTML = `
             <td class="tdDepLib">${entrees.libelle}</td>
@@ -88,57 +88,58 @@ function afficherContenu(idAAfficher){
         tabCorps.appendChild(ligne)
     })
     
-    afficherInputEntree(cat, tabCorps)
+    afficherInputEntree(idCategorie, tabCorps)
     tab.appendChild(tabCorps)
     zone.appendChild(tab)
     lucide.createIcons()
 }
 
-function masquerContenu(idAMasquer){
+function masquerContenu(idCategorie){
     // Récupération du div dans lequel supprimer le contenu
-    const zone = document.querySelector("#"+idAMasquer+" .contenu")
+    const zone = document.querySelector('[data-idcategorie="'+idCategorie+'"] .contenu')
 
     // Suppression de ce qui s'y trouve
     zone.innerHTML=""
 }
 
-function creerZonesDepenses()
-{
+function creerDivCategories(){
     //Récupération de l'objet DOM correspondant aux dépenses
     const zone = document.querySelector("div.zoneDepenses")
     // Suppression au cas où
     zone.innerHTML=''
 
     // Parcours de toutes les catégories
-    data.categories.forEach(entrees => {
-        // Création d'un div
+    data.categories.forEach(cat => {
+        // Création d'un div par catégorie
         const bloc = document.createElement('div')
-        // Remplissage
-        bloc.id = entrees.nom
-        // Ajout d'une class depense
-        bloc.classList.add("depense")
-        
+        // Insertion de l'id de la catégorie en data
+        bloc.dataset.idcategorie = cat.id
+        // Association à la classe categorieDepense
+        bloc.classList.add("categorieDepense")
+        // Création du titre et des boutons
         bloc.innerHTML = `
             <h2>
-                ${entrees.nom}
-                <!--<input class="boutonAffMasq" id="bouton${entrees.nom}" type="button" value="Afficher"/>-->
-                <button class="boutonAffMasq" value="masq">
+                ${cat.nom}
+                <button class="boutonAffMasq" data-action="afficher">
                     <i data-lucide="square-plus"></i>
                 </button>
             </h2>
             <div class="contenu">
             </div>
         `
+        // Intégration du bloc dans la zone de dépenses
         zone.appendChild(bloc)
     })
+    //Création des icones
     lucide.createIcons()
 }
 
 function afficherInputEntree(categorie, zone){
 
-
     //Création de la ligne qui accueillera les INPUT
     const ligne = document.createElement('tr')
+    // Association de la ligne à une classe input
+    ligne.classList.add("input")
 
     //Parcours de toutes les charges et création des option correspondantes pour le menu déroulant
     const optionsCharges = data.listeCharge.map(entree => {
@@ -150,16 +151,17 @@ function afficherInputEntree(categorie, zone){
         return `<option value="${entree.id}">${entree.libelle}</option>`;
     }).join('');
 
+    // Remplissage
     ligne.innerHTML = `
-        <td><input class="tdDepLib" type="text" id="libelle${categorie.nom}" name="libelle${categorie.nom}" /></td>
-        <td><input class="tdDepMon" type="number" id="montant${categorie.nom}" name="montant${categorie.nom}" /></td>
+        <td><input class="tdDepLib" type="text" name="libelle" /></td>
+        <td><input class="tdDepMon" type="number" name="montant" /></td>
         <td>
-            <select name="choixCharge${categorie.nom}">
+            <select name="choixCharge">
                 ${optionsCharges}
             </select>
         </td>
         <td>
-            <select name="choixCompte${categorie.nom}">
+            <select name="choixCompte">
                 ${optionsComptes}
             </select>
         </td>
@@ -168,6 +170,7 @@ function afficherInputEntree(categorie, zone){
             </button>
         <td>
     `
+    // Ajout de la ligne à la zone
     zone.appendChild(ligne)
 }
 
@@ -178,8 +181,6 @@ function reduireZone(idCategorie){
     //Récupération de l'objet DOM correspondant
     const zone = document.getElementById("tabEntrees"+cat.nom)
 }
-
-//creerZonesDepenses()
 
 function rechLibelle(liste, valeur){
     const objetTrouve = liste.find(obj => obj["id"] === valeur);
