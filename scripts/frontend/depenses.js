@@ -1,27 +1,40 @@
 // Déclaration de la variable contenant le div des dépenses
 const parentClick = document.querySelector('.zoneDepenses')
 
+
+
 // Fonction appelée lorsqu'un click survient dans le div des dépenses
 parentClick.addEventListener("click", (event) => {
     // Déclaration de la variable qui va contenir le bouton cliqué ayant la class boutonAffMasq
-    const button = event.target.closest('.boutonAffMasq')
+    const button = event.target.closest('.boutonAffMasq, .suppDep, .addDep')
     // Si on ne trouve pas, on sort
     if (!button) return;
 
     // On déclare la variable contenant le div avec la classe dépense à laquelle le bouton appartient
     const depense = button.closest('.depense');
 
-    if (button.value==="masq"){
-        afficherContenu(depense.id)
-        button.value="affi"
-        button.innerHTML='<i data-lucide="square-minus"></i>'
+    // Tests pour savoir quel bouton est cliqué, et traitement
+    if (button.classList.contains('boutonAffMasq')){
+        if (button.value==="masq"){
+            afficherContenu(depense.id)
+            button.value="affi"
+            button.innerHTML='<i data-lucide="square-minus"></i>'
+        }
+        else{
+            masquerContenu(depense.id)
+            button.value="masq"
+            button.innerHTML='<i data-lucide="square-plus"></i>'
+        }
+        lucide.createIcons()
     }
-    else{
-        masquerContenu(depense.id)
-        button.value="masq"
-        button.innerHTML='<i data-lucide="square-plus"></i>'
+
+    if (button.classList.contains('suppDep')){
+        console.log("Supprimer dépense")
     }
-    lucide.createIcons()
+
+    if (button.classList.contains('addDep')){
+        console.log("Ajouter dépense")
+    }
 })
 
 // La fonction reçoit en entrée le nom de la catégorie
@@ -65,11 +78,11 @@ function afficherContenu(idAAfficher){
         const ligne = document.createElement('tr')
         //Remplissage
         ligne.innerHTML = `
-            <td>${entrees.libelle}</td>
-            <td>${entrees.montant.toFixed(2)} €</td>
-            <td>${rechLibelle(data.listeCharge, entrees.idCharge)}</td>
-            <td>${rechLibelle(data.listeComptes, entrees.idComptePayeDepuis)}</td>
-            <td><button class="addDep"><i data-lucide="circle-x"></i></button></td>
+            <td class="tdDepLib">${entrees.libelle}</td>
+            <td class="tdDepMon">${entrees.montant.toFixed(2)} €</td>
+            <td class="tdDepCha">${rechLibelle(data.listeCharge, entrees.idCharge)}</td>
+            <td class="tdDepCom">${rechLibelle(data.listeComptes, entrees.idComptePayeDepuis)}</td>
+            <td class="tdDepBut"><button class="suppDep"><i data-lucide="circle-x"></i></button></td>
         `
         //Ajout de la ligné créée
         tabCorps.appendChild(ligne)
@@ -138,8 +151,8 @@ function afficherInputEntree(categorie, zone){
     }).join('');
 
     ligne.innerHTML = `
-        <td><input type="text" id="libelle${categorie.nom}" name="libelle${categorie.nom}" /></td>
-        <td><input type="number" id="montant${categorie.nom}" name="montant${categorie.nom}" /></td>
+        <td><input class="tdDepLib" type="text" id="libelle${categorie.nom}" name="libelle${categorie.nom}" /></td>
+        <td><input class="tdDepMon" type="number" id="montant${categorie.nom}" name="montant${categorie.nom}" /></td>
         <td>
             <select name="choixCharge${categorie.nom}">
                 ${optionsCharges}
@@ -150,7 +163,7 @@ function afficherInputEntree(categorie, zone){
                 ${optionsComptes}
             </select>
         </td>
-            <button class="suppDep">
+            <button class="addDep">
                 <i data-lucide="circle-plus"></i>
             </button>
         <td>
