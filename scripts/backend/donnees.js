@@ -25,3 +25,17 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
 
     lecteur.readAsText(fichier);
 });
+
+// Fonction qui supprime une dépense avec idEntree dans la liste d'une catégorie idCategorie
+function suppDepData(idEntree, idCategorie){
+
+    // Récupération de l'entrée correspondant à l'id de la catégorie
+    const categorie = data.entrees.find(e => e.id===Number(idCategorie))
+    // Recherche dans la liste des entrées l'index de celle portant le numéro d'id
+    const indexEntree = categorie.liste.findIndex(i => i.id === Number(idEntree))
+    // Suppression de l'entrée par son numéro d'index
+    const supp = categorie.liste.splice(indexEntree,1)
+
+    // Si l'élement avec le bon id a été supprimé, TRUE est renvoyé
+    return supp.length > 0 && supp[0].id === Number(idEntree)
+}
