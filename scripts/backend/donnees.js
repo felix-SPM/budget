@@ -39,3 +39,27 @@ function suppDepData(idEntree, idCategorie){
     // Si l'élement avec le bon id a été supprimé, TRUE est renvoyé
     return supp.length > 0 && supp[0].id === Number(idEntree)
 }
+
+function ajoutDepData(idCategorie, input){
+
+    const categorie = data.entrees.find(e => e.id === idCategorie);
+    if (!categorie) return false;
+
+    const nouvelId =
+        categorie.liste.length > 0
+            ? Math.max(...categorie.liste.map(e => e.id)) + 1
+            : 1;
+
+    const nouvelleEntree = {
+        id: nouvelId,
+        libelle: input.querySelector('input.tdDepLib').value.trim(),
+        montant: Number(input.querySelector('input.tdDepMon').value),
+        idComptePayeDepuis: Number(input.querySelector('select.tdDepCompte').value),
+        idCharge: Number(input.querySelector('select.tdDepCharge').value)
+    };
+
+    const longueurAvant = categorie.liste.length;
+    const nouvelleLongueur = categorie.liste.push(nouvelleEntree);
+
+    return nouvelleLongueur === longueurAvant + 1;
+}

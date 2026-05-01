@@ -8,33 +8,38 @@ parentClick.addEventListener("click", (event) => {
     // Si ça retourne null, la fonction s'arrête
     if (!button) return;
 
+    const cat = Number(button.closest('.categorieDepense').dataset.idcategorie)
     // Tests pour savoir quel bouton est cliqué, et traitement
     if (button.classList.contains('boutonAffMasq')){
         // On déclare la variable contenant le div avec la classe dépense à laquelle le bouton appartient
-        const cat = button.closest('.categorieDepense');
+        
         if (button.dataset.action==="afficher"){
-            afficherContenu(Number(cat.dataset.idcategorie))
+            afficherContenu(cat)
             button.dataset.action="masquer"
             button.innerHTML='<i data-lucide="square-minus"></i>'
         }
         else{
-            masquerContenu(Number(cat.dataset.idcategorie))
+            masquerContenu(cat)
             button.dataset.action="afficher"
             button.innerHTML='<i data-lucide="square-plus"></i>'
         }
         lucide.createIcons()
     }
 
-    const entree = button.closest('tr')
     if (button.classList.contains('suppDep')){
-        if (suppDepData(entree.dataset.identree, button.closest('div.categorieDepense').dataset.idcategorie)){
+        const entree = button.closest('tr')
+        if (suppDepData(entree.dataset.identree, cat)){
             entree.remove()
         }
-
     }
 
     if (button.classList.contains('addDep')){
-        console.log("Ajouter dépense")
+        // Récupération de la ligne contenant les informations
+        const entree = button.closest("tr.input")
+        
+        if(ajoutDepData(cat, entree)){
+            afficherContenu(cat)
+        }
     }
 })
 
@@ -48,7 +53,7 @@ function afficherContenu(idCategorie){
 
     // Récupération du div dans lequel insérer le contenu
     const zone = document.querySelector('[data-idcategorie="'+idCategorie+'"] .contenu')
-
+    zone.innerHTML=''
     //Création du tableau
     const tab = document.createElement('table')
     // Création du titre du tableau
@@ -156,12 +161,12 @@ function afficherInputEntree(categorie, zone){
         <td><input class="tdDepLib" type="text" name="libelle" /></td>
         <td><input class="tdDepMon" type="number" name="montant" /></td>
         <td>
-            <select name="choixCharge">
+            <select class="tdDepCharge" name="choixCharge">
                 ${optionsCharges}
             </select>
         </td>
         <td>
-            <select name="choixCompte">
+            <select class="tdDepCompte" name="choixCompte">
                 ${optionsComptes}
             </select>
         </td>
