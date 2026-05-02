@@ -16,11 +16,20 @@
     <h1 class="titreApp">SoFix Budget <i data-lucide="piggy-bank"></i></h1>
     <!-- PARTIE DE GESTION DES FICHIERS -->
     <div class="partie">
-        <h2 class="titrePartie">Gestion des données <i data-lucide="file"></i></i></h2>
+        <h2 class="titrePartie">Gestion des données <i data-lucide="file"></i></h2>
         <div class="bodyDonnees">
-            <input type="file" id="jsonFileInput" accept=".json,application/json" value="Sélectionner">
-            <button id="enregistrerDonnees" onclick="enregistrerDataJSON()">Enregistrer   <i data-lucide="save"></i></button>
+            <input type="file" id="jsonFileInput" hidden>
+            <label for="jsonFileInput" class="btn-file">Choisir un fichier JSON <i data-lucide="folder-clock"></i></label>
+            
+            <input type="button" id="enregistrerDonnees" onclick="enregistrerDataJSON()" hidden>
+            <label for="enregistrerDonnees" class="btn-file">Enregistrer <i data-lucide="save"></i></label>
+            <!-- <input type="file" id="jsonFileInput" accept=".json,application/json" value="Sélectionner"> -->
+            <!-- <button id="enregistrerDonnees" onclick="enregistrerDataJSON()">Enregistrer   <i data-lucide="save"></i></button> -->
         </div>
+    </div>
+    <!-- PARTIR CONFIG COMPTE -->
+    <div class="partie">
+        <h2 class="titrePartie">Configuration des comptes <i data-lucide="wrench"></i></h2>
     </div>
     <!-- PARTIE REVENUS -->
     <div class="partie">

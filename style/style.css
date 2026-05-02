@@ -4,6 +4,20 @@ body {
   /*display: flex;*/
   justify-content: center;
   align-items: center;
+
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("../img/fond-argent.jpg");
+  background-repeat: repeat;
+  opacity: 0.2; /* 20% d'opacité */
+  z-index: -1;
 }
 
 .titreApp{
@@ -13,7 +27,7 @@ body {
     justify-content: center;
     align-items: center;
     font-size: xxx-large;
-    color: coral;
+    color: darkslateblue;
     gap: 20px;
 }
 
@@ -22,7 +36,7 @@ body {
     justify-content: center;
     align-items: center;
     gap: 10px;
-    color:coral;
+    color:darkslateblue;
     padding-top: 5px;
 }
 .partie{
@@ -49,14 +63,18 @@ body {
     width:100%;
 }
 
-#enregistrerDonnees{
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 50%;
-}
 
-#jsonFileInput{
-    width:50%;
+.btn-file {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px 16px;
+  margin: 10px 10px;
+  background-color:cadetblue;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  width: 40%;
+  gap: 8px;
 }

@@ -1,15 +1,12 @@
 let data = {
     "listeComptes" : [
-        { "id" : 1, "symbole" : "J.C", "libelle" : "Joint courant"},
-        { "id" : 2, "symbole" : "J.CSL", "libelle" : "Joint CSL"},
-        { "id" : 3, "symbole" : "S.C", "libelle" : "Sophie courant"} 
     ],
-    "listeCharge" : [
+    "listeCharge" : [/*        
         { "id" : 1, "symbole" : "J", "libelle" : "Joint"},
         { "id" : 2, "symbole" : "S", "libelle" : "Sophie"},
         { "id" : 3, "symbole" : "F", "libelle" : "Félix"} 
-    ],
-    "categories" : [
+    */],
+    "categories" : [/*
         {"id" : 1, "nom" : "Assurances"},
         {"id" : 2, "nom" : "Audiovisuel"},
         {"id" : 3, "nom" : "Cadeaux"},
@@ -27,8 +24,8 @@ let data = {
         {"id" : 15, "nom" : "Quotidien"},
         {"id" : 16, "nom" : "Véhicules"},
         {"id" : 17, "nom" : "Voyages"}
-    ],
-    "entrees" : [
+    */],
+    "entrees" : [/*
         {
             "id" : 1,
             "liste" : [
@@ -117,5 +114,5 @@ let data = {
             "liste" : [
             ]
         }
-    ]
+    */]
 }
