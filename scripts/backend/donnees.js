@@ -63,3 +63,28 @@ function ajoutDepData(idCategorie, input){
 
     return nouvelleLongueur === longueurAvant + 1;
 }
+
+function enregistrerDataJSON() {
+    // Récupération de la date actuelle
+    const aujourdHui = new Date();
+
+    const annee = aujourdHui.getFullYear();
+    const jour = String(aujourdHui.getDate()).padStart(2, '0');
+    const mois = String(aujourdHui.getMonth() + 1).padStart(2, '0');
+
+    const nomFichier = `${annee}${mois}${jour} - SoFixBudget.json`;
+
+    const contenuJSON = JSON.stringify(data, null, 2);
+    const blob = new Blob([contenuJSON], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const lien = document.createElement('a');
+    lien.href = url;
+    lien.download = nomFichier;
+
+    document.body.appendChild(lien);
+    lien.click();
+    document.body.removeChild(lien);
+
+    URL.revokeObjectURL(url);
+}

@@ -6,10 +6,57 @@ body {
   align-items: center;
 }
 
+.titreApp{
+    padding-top: 30px;
+    padding-bottom: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: xxx-large;
+    color: coral;
+    gap: 20px;
+}
+
+.titrePartie{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    color:coral;
+    padding-top: 5px;
+}
+.partie{
+    width : 60%;
+    margin: 10px auto;
+    padding-bottom: 40px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: #f0f4f8;
+    border-radius: 20px;
+}
 .tdDepLib{
     width: 200px;
 }
 
 .tdDepMon{
     width:2OOpx;
+}
+
+.bodyDonnees{
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    width:100%;
+}
+
+#enregistrerDonnees{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 50%;
+}
+
+#jsonFileInput{
+    width:50%;
 }

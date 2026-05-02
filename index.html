@@ -13,13 +13,18 @@
   <script src="./scripts/backend/icon.js" defer></script>
 </head>
 <body>
-    <h1 class="titreApp">Calculateur de budget <i data-lucide="badge-euro"></i></h1>
-    <!-- Chargement fichier -->
-    <input type="file" id="jsonFileInput" accept=".json,application/json">
-    <br/>
-    <br/>
+    <h1 class="titreApp">SoFix Budget <i data-lucide="piggy-bank"></i></h1>
+    <!-- PARTIE DE GESTION DES FICHIERS -->
+    <div class="partie">
+        <h2 class="titrePartie">Gestion des données <i data-lucide="file"></i></i></h2>
+        <div class="bodyDonnees">
+            <input type="file" id="jsonFileInput" accept=".json,application/json" value="Sélectionner">
+            <button id="enregistrerDonnees" onclick="enregistrerDataJSON()">Enregistrer   <i data-lucide="save"></i></button>
+        </div>
+    </div>
     <!-- PARTIE REVENUS -->
-    <div class="zoneRevenus">
+    <div class="partie">
+        <h2 class="titrePartie">Revenus <i data-lucide="hand-coins"></i></i></h2>
         <div class="zoneSaise">
             <label> Salaire Sophie : </label>
             <input type="number" id="salaireSophie" name="salaireSophie" /><br />
@@ -31,7 +36,11 @@
     </div>
 
     <!-- PARTIE DEPENSES -->
-    <div class="zoneDepenses">
+    <div class="partie">
+        <h2 class="titrePartie">Dépenses <i data-lucide="receipt-euro"></i></h2>
+        <div class="zoneDepenses">
+        </div>
     </div>
+        
 </body>
 </html>
