@@ -8,9 +8,11 @@
   <script src="./scripts/frontend/init.js" defer></script>
   <script src="./scripts/frontend/salaire.js" defer></script>
   <script src="./scripts/frontend/depenses.js" defer></script>
+  <script src="./scripts/frontend/utilisateurs.js" defer></script>
   <script src="./scripts/backend/donnees.js" defer></script>
   <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js" defer></script>
   <script src="./scripts/backend/icon.js" defer></script>
+  <script src="./scripts/backend/utilisateurs.js" defer></script>
 </head>
 <body>
     <h1 class="titreApp">SoFix Budget <i data-lucide="piggy-bank"></i></h1>
@@ -23,13 +25,30 @@
             
             <input type="button" id="enregistrerDonnees" onclick="enregistrerDataJSON()" hidden>
             <label for="enregistrerDonnees" class="btn-file">Enregistrer <i data-lucide="save"></i></label>
-            <!-- <input type="file" id="jsonFileInput" accept=".json,application/json" value="Sélectionner"> -->
-            <!-- <button id="enregistrerDonnees" onclick="enregistrerDataJSON()">Enregistrer   <i data-lucide="save"></i></button> -->
         </div>
     </div>
-    <!-- PARTIR CONFIG COMPTE -->
+    <!-- PARTIR CONFIG COMPTE ET UTILISATEURS-->
     <div class="partie">
-        <h2 class="titrePartie">Configuration des comptes <i data-lucide="wrench"></i></h2>
+        <h2 class="titrePartie">Configuration des utilisateurs <i data-lucide="user"></i> et comptes <i data-lucide="wrench"></i></h2>
+        <div class="bodyComptesEtutilisateurs">
+            <div class="utilisateurs">
+                <h3>Utilisateurs</h3>
+                <div class="listeUtilisateurs">
+
+                </div>
+                <div class="ajoutUtilisateurs">
+                    <input id="inputNewUtilisateur" type="text" placeholder="Nom d'utilisateur"><button class="btnAddUser"><i data-lucide="circle-plus"></i></button>
+                </div>
+            </div>
+            <div class="comptes">
+                <div class="listeComptes">
+
+                </div>
+                <div class="ajoutCompte">
+                    
+                </div>
+            </div>
+        </div>
     </div>
     <!-- PARTIE REVENUS -->
     <div class="partie">

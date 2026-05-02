@@ -34,3 +34,23 @@
     width: 15px;
     height: 15px;
 }
+
+.btnAddUser{
+    border: 0cm;
+    background-color: transparent;
+}
+
+.btnAddUser svg{
+    width: 25px;
+    height: 25px;
+}
+
+.suppUser{
+    border: 0cm;
+    background-color: transparent;
+}
+
+.suppUser svg{
+    width: 15px;
+    height: 15px;
+}

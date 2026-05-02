@@ -9,12 +9,12 @@ body {
 
 body::before {
   content: "";
-  position: fixed;
+  position:fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-image: url("../img/fond-argent.jpg");
+  background-image: url("../img/background.png");
   background-repeat: repeat;
   opacity: 0.2; /* 20% d'opacité */
   z-index: -1;
@@ -65,16 +65,28 @@ body::before {
 
 
 .btn-file {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 10px 16px;
-  margin: 10px 10px;
-  background-color:cadetblue;
-  border-radius: 8px;
-  color: white;
-  cursor: pointer;
-  width: 40%;
-  gap: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px 16px;
+    margin: 10px 10px;
+    background-color:cadetblue;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    width: 40%;
+    gap: 8px;
+}
+
+.ajoutUtilisateurs{
+
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    gap: 8px;
+}
+
+#inputNewUtilisateur{
+    width:200px;
 }

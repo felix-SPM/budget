@@ -1,5 +1,23 @@
 // Création et initialisation de la variable contenant les données
-let data = null;
+let data = {
+    user:[
+        {id:"", nom:""}
+    ],
+    listeComptes:[
+        {id:"", symbole:"", libelle:""}
+    ],
+    listeCharge:[
+        {id:"", symbole:"", libelle:""}
+    ],
+    categories:[
+        {id:"", nom:""}
+    ],
+    entrees:[
+        {id:"", liste:[
+            {id:"", libelle:"", montant:"", idComptePayeDepuis:"", idCharge:""}
+        ]}
+    ]
+}
 
 // On attend l'évenement correspondant à un fichier sélectionné
 document.getElementById('jsonFileInput').addEventListener('change', function (event) {
