@@ -56,9 +56,9 @@ body::before {
     width:2OOpx;
 }
 
-.bodyDonnees{
+.boutonDonnees{
     align-items: center;
-    display: inline-flex;
+    display: flex;
     justify-content: center;
     width:100%;
 }
@@ -89,4 +89,8 @@ body::before {
 
 #inputNewUtilisateur{
     width:200px;
+}
+
+.nomFichierDonnees{
+    padding-left: 26px;
 }
