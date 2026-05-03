@@ -28,9 +28,19 @@ function ajouterUtilisateur(nom){
 // fonction qui supprime un utilisateur 
 function suppressionUtilisateur(idSupp){
     
-    // Suppression de l'entrée par son numéro d'index
-    const supp = data.user.splice(idSupp,1)
-    console.log(supp)
-    // Si l'élement avec le bon id a été supprimé, TRUE est renvoyé
-    return supp.length > 0 && supp[0].id === Number(idSupp)
+    // Cherche d'index dans le tableau de user de l'élement qui possède l'id = idSupp
+    const indexSupp = data.user.findIndex(user => user.id === Number(idSupp));
+
+    if (!(indexSupp===-1)){
+        // Suppression de l'entrée par son numéro d'index
+        const supp = data.user.splice(indexSupp,1)
+        // Si l'élement avec le bon id a été supprimé, TRUE est renvoyé
+        return supp.length > 0 && supp[0].id === Number(idSupp)
+    }
+    else{
+        return false
+    }
+    
+
+    
 }

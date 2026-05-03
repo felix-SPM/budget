@@ -2,4 +2,7 @@
 
 function initFront(){
     creerDivCategories()
+    majListeUtilisateur()
+
+    lucide.createIcons()
 }
