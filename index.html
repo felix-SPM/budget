@@ -9,10 +9,12 @@
   <script src="./scripts/frontend/salaire.js" defer></script>
   <script src="./scripts/frontend/depenses.js" defer></script>
   <script src="./scripts/frontend/utilisateurs.js" defer></script>
+  <script src="./scripts/frontend/comptes.js" defer></script>
   <script src="./scripts/frontend/frontDonnees.js" defer></script>
   <script src="./scripts/backend/donnees.js" defer></script>
   <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
   <script src="./scripts/backend/utilisateurs.js" defer></script>
+  <script src="./scripts/backend/comptes.js" defer></script>
   <script src="./scripts/backend/backDepense.js" defer></script>
 </head>
 <body>
@@ -48,18 +50,23 @@
                 </div>
             </div>
             <div class="comptes">
+                <h3>Comptes</h3>
                 <div class="listeComptes">
 
                 </div>
                 <div class="ajoutCompte">
-                    
+                    <select id="selectProprietaireCompte" aria-label="Propriétaire du compte"></select>
+                    <span class="champSymbole">
+                        <span id="prefixeSymboleCompte">?.</span><input id="inputSymboleCompte" type="text" maxlength="5" placeholder="UUU" aria-label="Symbole du compte">
+                    </span>
+                    <input id="inputNewCompte" type="text" placeholder="Intitulé du compte"><button class="btnAddCompte" aria-label="Ajouter le compte"><i data-lucide="circle-plus"></i></button>
                 </div>
             </div>
         </div>
     </div>
     <!-- PARTIE REVENUS -->
     <div class="partie">
-        <h2 class="titrePartie">Revenus <i data-lucide="hand-coins"></i></i></h2>
+        <h2 class="titrePartie">Revenus <i data-lucide="hand-coins"></i></h2>
         <div class="zoneSaise">
             <label> Salaire Sophie : </label>
             <input type="number" id="salaireSophie" name="salaireSophie" /><br />
@@ -76,9 +83,9 @@
         <div class="zoneDepenses">
         </div>
     </div>
-        
+
+    <script>
+        lucide.createIcons()
+    </script>
 </body>
 </html>
-<script>
-    lucide.createIcons()
-</script>

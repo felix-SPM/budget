@@ -66,7 +66,7 @@ function afficherContenu(idCategorie){
             <th>Charge</th>
             <th>Compte</th>
             <th>Actions</th>
-        <tr>`
+        </tr>`
 
     //insertion dans le tableau de la ligne de titre
     tab.appendChild(ligneTitre)
@@ -83,10 +83,10 @@ function afficherContenu(idCategorie){
         ligne.dataset.identree=entrees.id
         //Remplissage
         ligne.innerHTML = `
-            <td class="tdDepLib">${entrees.libelle}</td>
-            <td class="tdDepMon">${entrees.montant.toFixed(2)} €</td>
-            <td class="tdDepCha">${rechLibelle(data.listeCharge, entrees.idCharge)}</td>
-            <td class="tdDepCom">${rechLibelle(data.listeComptes, entrees.idComptePayeDepuis)}</td>
+            <td class="tdDepLib">${echapperHTML(entrees.libelle)}</td>
+            <td class="tdDepMon">${Number(entrees.montant).toFixed(2)} €</td>
+            <td class="tdDepCha">${echapperHTML(rechLibelle(data.listeCharge, entrees.idCharge))}</td>
+            <td class="tdDepCom">${echapperHTML(rechLibelle(data.listeComptes, entrees.idComptePayeDepuis))}</td>
             <td class="tdDepBut"><button class="suppDep"><i data-lucide="circle-x"></i></button></td>
         `
         //Ajout de la ligné créée
@@ -97,6 +97,14 @@ function afficherContenu(idCategorie){
     tab.appendChild(tabCorps)
     zone.appendChild(tab)
     lucide.createIcons()
+}
+
+// Réaffiche les catégories actuellement dépliées
+// (utile quand la liste des comptes change, pour mettre à jour les menus déroulants)
+function rafraichirCategoriesOuvertes(){
+    document.querySelectorAll('.boutonAffMasq[data-action="masquer"]').forEach(bouton => {
+        afficherContenu(Number(bouton.closest('.categorieDepense').dataset.idcategorie))
+    })
 }
 
 function masquerContenu(idCategorie){
@@ -124,7 +132,7 @@ function creerDivCategories(){
         // Création du titre et des boutons
         bloc.innerHTML = `
             <h2>
-                ${cat.nom}
+                ${echapperHTML(cat.nom)}
                 <button class="boutonAffMasq" data-action="afficher">
                     <i data-lucide="square-plus"></i>
                 </button>
@@ -148,12 +156,12 @@ function afficherInputEntree(categorie, zone){
 
     //Parcours de toutes les charges et création des option correspondantes pour le menu déroulant
     const optionsCharges = data.listeCharge.map(entree => {
-        return `<option value="${entree.id}">${entree.libelle}</option>`;
+        return `<option value="${echapperHTML(entree.id)}">${echapperHTML(entree.libelle)}</option>`;
     }).join('');
 
     //Parcours de tous les comptes et création des option correspondantes pour le menu déroulant
     const optionsComptes = data.listeComptes.map(entree => {
-        return `<option value="${entree.id}">${entree.libelle}</option>`;
+        return `<option value="${echapperHTML(entree.id)}">${echapperHTML(entree.libelle)}</option>`;
     }).join('');
 
     // Remplissage
@@ -170,10 +178,11 @@ function afficherInputEntree(categorie, zone){
                 ${optionsComptes}
             </select>
         </td>
+        <td>
             <button class="addDep">
                 <i data-lucide="circle-plus"></i>
             </button>
-        <td>
+        </td>
     `
     // Ajout de la ligne à la zone
     zone.appendChild(ligne)

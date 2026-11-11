@@ -24,8 +24,17 @@ document.querySelector('.listeUtilisateurs').addEventListener('click', (event)=>
     // récupération de l'id de l'utilisateur
     const idUser = button.closest('tr').dataset.idutilisateur
 
-    suppressionUtilisateur(idUser)
-    majListeUtilisateur()
+    // On empêche la suppression d'un utilisateur qui possède encore des comptes
+    const nb = nbComptesUtilisateur(idUser)
+    if (nb > 0){
+        alert(`Impossible de supprimer cet utilisateur : il possède ${nb} compte(s).`)
+        return
+    }
+
+    if (suppressionUtilisateur(idUser)){
+            majListeUtilisateur()
+    }
+
 })
 // Fonction de mise à jour de la liste des utilisateurs
 function majListeUtilisateur(){
@@ -50,10 +59,10 @@ function majListeUtilisateur(){
                 // Création du contenu avec le nom, puis un bouton pour supprimer l'utilisateur
                 trUser.innerHTML=`
                     <td class="ligneUtilisateur">
-                        ${utilisateur.nom}
+                        ${echapperHTML(utilisateur.nom)}
                     </td>
                     <td>
-                        <button class="suppUser"><i data-lucide="circle-x"></i></button>
+                        <button class="btnSupp suppUser" aria-label="Supprimer l'utilisateur"><i data-lucide="circle-x"></i></button>
                     </td>
                     `
                 // Ajout de la ligne dans la table
@@ -63,6 +72,8 @@ function majListeUtilisateur(){
         // Ajout du tableau dans le div
         zone.appendChild(tabUser)
     }
+    // Les propriétaires possibles des comptes dépendent des utilisateurs
+    majListeComptes()
     // Génération des boutons
     lucide.createIcons()
 }

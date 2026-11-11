@@ -35,15 +35,18 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
             data = JSON.parse(e.target.result);
             // Initialisation de l'affichage
             initFront()
-            majNomFichier(event.target.files[0].name)
+            majNomFichier(fichier.name)
 
         } catch (erreur) {
             console.error('Le fichier JSON est invalide :', erreur);
+            alert(`Impossible de charger "${fichier.name}" : le fichier JSON est invalide.`);
         }
-        
+
     };
 
     lecteur.readAsText(fichier);
+    // Réinitialisation du champ pour pouvoir recharger le même fichier
+    event.target.value = '';
 });
 
 function enregistrerDataJSON() {

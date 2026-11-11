@@ -45,12 +45,24 @@
     height: 25px;
 }
 
-.suppUser{
+/* Bouton de suppression commun (utilisateurs, comptes) */
+.btnSupp{
+    border: 0cm;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.btnSupp svg{
+    width: 15px;
+    height: 15px;
+}
+
+.btnAddCompte{
     border: 0cm;
     background-color: transparent;
 }
 
-.suppUser svg{
-    width: 15px;
-    height: 15px;
+.btnAddCompte svg{
+    width: 25px;
+    height: 25px;
 }

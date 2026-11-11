@@ -3,8 +3,11 @@ function suppDepData(idEntree, idCategorie){
 
     // Récupération de l'entrée correspondant à l'id de la catégorie
     const categorie = data.entrees.find(e => e.id===Number(idCategorie))
+    if (!categorie) return false
     // Recherche dans la liste des entrées l'index de celle portant le numéro d'id
     const indexEntree = categorie.liste.findIndex(i => i.id === Number(idEntree))
+    // Si l'entrée n'existe pas, on s'arrête (splice(-1) supprimerait la dernière entrée)
+    if (indexEntree === -1) return false
     // Suppression de l'entrée par son numéro d'index
     const supp = categorie.liste.splice(indexEntree,1)
 
