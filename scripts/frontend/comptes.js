@@ -69,9 +69,9 @@ function majFormulaireCompte(){
     const choixPrecedent = selectProprietaireCompte.value
     const users = utilisateursValides()
 
-    let options = users.map(u => `<option value="${echapperHTML(u.id)}">${echapperHTML(u.nom)}</option>`)
-    if (jointDisponible()) options.push(`<option value="${ID_JOINT}">Joint</option>`)
-    selectProprietaireCompte.innerHTML = options.join('')
+    selectProprietaireCompte.innerHTML = listeProprietaires()
+        .map(p => `<option value="${echapperHTML(p.id)}">${echapperHTML(p.nom)}</option>`)
+        .join('')
 
     // On conserve le choix précédent s'il existe encore
     if ([...selectProprietaireCompte.options].some(o => o.value === choixPrecedent)){

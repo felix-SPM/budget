@@ -156,7 +156,7 @@ function afficherContenu(idCategorie){
         ligne.innerHTML = `
             <td class="tdDepLib">${echapperHTML(entrees.libelle)}</td>
             <td class="tdDepMon">${Number(entrees.montant).toFixed(2)} €</td>
-            <td class="tdDepCha">${echapperHTML(rechLibelle(data.listeCharge, entrees.idCharge))}</td>
+            <td class="tdDepCha">${echapperHTML(nomProprietaire(entrees.idCharge))}</td>
             <td class="tdDepCom">${echapperHTML(intituleCompteParId(entrees.idComptePayeDepuis))}</td>
             <td class="tdDepBut">
                 <button class="modifDep" aria-label="Modifier la dépense"><i data-lucide="pencil"></i></button>
@@ -228,9 +228,9 @@ function cellulesSaisieDepense(depense = {}){
     // Attribut "selected" pour l'option correspondant à la valeur actuelle
     const selection = (id, valeur) => id === valeur ? ' selected' : ''
 
-    //Parcours de toutes les charges et création des option correspondantes pour le menu déroulant
-    const optionsCharges = data.listeCharge.map(entree => {
-        return `<option value="${echapperHTML(entree.id)}"${selection(entree.id, depense.idCharge)}>${echapperHTML(entree.libelle)}</option>`;
+    // Charges possibles : chaque utilisateur, plus "Joint" s'il y en a plusieurs
+    const optionsCharges = listeProprietaires().map(p => {
+        return `<option value="${echapperHTML(p.id)}"${selection(p.id, depense.idCharge)}>${echapperHTML(p.nom)}</option>`;
     }).join('');
 
     //Parcours de tous les comptes et création des option correspondantes pour le menu déroulant
@@ -284,9 +284,4 @@ function reduireZone(idCategorie){
 
     //Récupération de l'objet DOM correspondant
     const zone = document.getElementById("tabEntrees"+cat.nom)
-}
-
-function rechLibelle(liste, valeur){
-    const objetTrouve = liste.find(obj => obj["id"] === valeur);
-  return objetTrouve ? objetTrouve["libelle"] : null;
 }

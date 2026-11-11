@@ -1,6 +1,12 @@
 // Fichier contenant les fonctions d'initialisation de la page
 
 function initFront(){
+    // Anciens fichiers : les charges des dépenses deviennent des utilisateurs (ou Joint)
+    const chargesNonTrouvees = migrerChargesVersUtilisateurs()
+    if (chargesNonTrouvees.length > 0){
+        alert(`Ces charges ne correspondent à aucun utilisateur : ${chargesNonTrouvees.join(', ')}.\n`
+            + `Les dépenses concernées n'ont plus de charge : modifiez-les pour en choisir une.`)
+    }
     creerDivCategories()
     // Anciens fichiers : on déduit le propriétaire des comptes à partir de leur symbole
     completerProprietairesComptes()

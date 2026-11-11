@@ -6,9 +6,6 @@ let data = {
     listeComptes:[
         {id:"", symbole:"", libelle:""}
     ],
-    listeCharge:[
-        {id:"", symbole:"", libelle:""}
-    ],
     categories:[
         {id:"", nom:""}
     ],

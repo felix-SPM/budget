@@ -11,7 +11,15 @@ function jointDisponible(){
     return utilisateursValides().length > 1
 }
 
-// Nom affiché du propriétaire d'un compte
+// Liste des choix possibles pour un propriétaire de compte ou une charge de dépense :
+// chaque utilisateur, puis "Joint" s'il y a plusieurs utilisateurs
+function listeProprietaires(){
+    const liste = utilisateursValides().map(u => ({ id: u.id, nom: u.nom }))
+    if (jointDisponible()) liste.push({ id: ID_JOINT, nom: 'Joint' })
+    return liste
+}
+
+// Nom affiché du propriétaire d'un compte (ou de la charge d'une dépense)
 function nomProprietaire(idProprietaire){
     if (idProprietaire === ID_JOINT) return 'Joint'
     const user = utilisateursValides().find(u => u.id === idProprietaire)

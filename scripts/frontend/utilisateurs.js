@@ -31,6 +31,13 @@ document.querySelector('.listeUtilisateurs').addEventListener('click', (event)=>
         return
     }
 
+    // On empêche aussi la suppression d'un utilisateur qui a des dépenses à sa charge
+    const nbDep = nbDepensesCharge(idUser)
+    if (nbDep > 0){
+        alert(`Impossible de supprimer cet utilisateur : ${nbDep} dépense(s) sont à sa charge.`)
+        return
+    }
+
     if (suppressionUtilisateur(idUser)){
             majListeUtilisateur()
     }
@@ -74,6 +81,8 @@ function majListeUtilisateur(){
     }
     // Les propriétaires possibles des comptes dépendent des utilisateurs
     majListeComptes()
+    // Ainsi que les charges proposées dans les dépenses
+    rafraichirCategoriesOuvertes()
     // Génération des boutons
     lucide.createIcons()
 }
