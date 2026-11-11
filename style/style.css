@@ -117,3 +117,51 @@ body::before {
     color: #555;
     padding-right: 10px;
 }
+
+/* Revenus */
+.nomRevenu{
+    padding-right: 20px;
+}
+
+.montantRevenu{
+    min-width: 120px;
+    text-align: right;
+    padding-right: 10px;
+}
+
+.inputModifRevenu{
+    width: 100px;
+}
+
+.nonSaisi, .messageVide{
+    font-style: italic;
+    color: #888;
+}
+
+/* Titre d'une catégorie de dépenses : nom + boutons */
+.titreCategorie{
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.nomCategorie{
+    margin-right: 6px;
+}
+
+.inputModifCategorie{
+    font-size: 1rem;
+    width: 220px;
+}
+
+/* Ajout d'une catégorie de dépenses */
+.ajoutCategorie{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+#inputNewCategorie{
+    width: 200px;
+}

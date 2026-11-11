@@ -4,9 +4,9 @@
 // Identifiant réservé au propriétaire "Joint" (compte commun à tous les utilisateurs)
 const ID_JOINT = 0
 
-// Liste des utilisateurs valides (on ignore les entrées sans ID)
+// Liste des utilisateurs
 function utilisateursValides(){
-    return (data.user || []).filter(u => u.id !== '' && u.id !== null && u.id !== undefined)
+    return data.user
 }
 
 // "Joint" n'est proposé que s'il y a plus d'un utilisateur
@@ -37,7 +37,7 @@ function validerCompte(libelle, idProprietaire, idIgnore = null){
     if (!listeProprietaires().some(p => p.id === idProprietaire)) return 'Le propriétaire du compte est invalide.'
     // Un même propriétaire ne peut pas avoir deux comptes du même nom
     // (ils seraient impossibles à distinguer dans les dépenses : "Félix - Courant")
-    const doublon = (data.listeComptes || []).some(c =>
+    const doublon = data.listeComptes.some(c =>
         c.id !== idIgnore
         && c.idProprietaire === idProprietaire
         && String(c.libelle).toLowerCase() === libelle.toLowerCase()
@@ -49,14 +49,12 @@ function validerCompte(libelle, idProprietaire, idIgnore = null){
 // Fonction pour ajouter un compte
 // Renvoie le compte créé, ou un message d'erreur (chaîne) si la saisie est invalide
 function ajouterCompte(libelle, idProprietaire){
-    if (!('listeComptes' in data)) data.listeComptes = []
-
     libelle = String(libelle).trim()
     const erreur = validerCompte(libelle, idProprietaire)
     if (erreur) return erreur
 
-    // Recherche d'un ID disponible (on ignore les éventuels ID vides)
-    const ids = data.listeComptes.map(c => Number(c.id)).filter(id => id > 0)
+    // Recherche d'un ID disponible
+    const ids = data.listeComptes.map(c => c.id)
     const idNew = ids.length > 0 ? Math.max(...ids) + 1 : 1
 
     const newCompte = { id: idNew, libelle: libelle, idProprietaire: idProprietaire }
@@ -69,7 +67,7 @@ function ajouterCompte(libelle, idProprietaire){
 // Renvoie true si la modification est faite, sinon un message d'erreur (chaîne)
 function modifierCompte(idCompte, libelle, idProprietaire){
     idCompte = Number(idCompte)
-    const compte = (data.listeComptes || []).find(c => c.id === idCompte)
+    const compte = data.listeComptes.find(c => c.id === idCompte)
     if (!compte) return 'Compte introuvable.'
 
     libelle = String(libelle).trim()
@@ -81,41 +79,14 @@ function modifierCompte(idCompte, libelle, idProprietaire){
     return true
 }
 
-// Anciens fichiers : les comptes avaient un symbole (ex : "J.CSL", "S.C").
-// Si le propriétaire manque, on le déduit de la première lettre de ce symbole
-// ("J" -> Joint, sinon l'utilisateur dont le nom commence par cette lettre),
-// puis on supprime le symbole, qui n'est plus utilisé.
-function migrerComptesSansSymbole(){
-    const initiale = texte => String(texte || '').normalize('NFD').replace(/[̀-ͯ]/g, '').charAt(0).toUpperCase()
-
-    ;(data.listeComptes || []).forEach(compte => {
-        if (!('symbole' in compte)) return
-
-        if (compte.id !== '' && !('idProprietaire' in compte)){
-            const lettre = initiale(compte.symbole)
-            if (lettre === 'J' && jointDisponible()){
-                compte.idProprietaire = ID_JOINT
-            }
-            else {
-                const candidats = utilisateursValides().filter(u => initiale(u.nom) === lettre)
-                if (candidats.length === 1) compte.idProprietaire = candidats[0].id
-            }
-        }
-        delete compte.symbole
-    })
-}
-
 // Nombre de comptes appartenant à un utilisateur
 function nbComptesUtilisateur(idUtilisateur){
-    return (data.listeComptes || []).filter(c => c.idProprietaire === Number(idUtilisateur)).length
+    return data.listeComptes.filter(c => c.idProprietaire === Number(idUtilisateur)).length
 }
 
 // Compte le nombre de dépenses payées depuis un compte
 function nbDepensesCompte(idCompte){
-    if (!('entrees' in data)) return 0
-    return data.entrees.reduce((total, categorie) =>
-        total + (categorie.liste || []).filter(dep => dep.idComptePayeDepuis === Number(idCompte)).length
-    , 0)
+    return toutesLesDepenses().filter(dep => dep.idComptePayeDepuis === Number(idCompte)).length
 }
 
 // Fonction qui supprime un compte

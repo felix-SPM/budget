@@ -77,3 +77,14 @@
     width: 15px;
     height: 15px;
 }
+
+.btnAddCategorie{
+    border: 0cm;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.btnAddCategorie svg{
+    width: 25px;
+    height: 25px;
+}

@@ -6,7 +6,7 @@
   <link href="./style/icon.css" rel="stylesheet" />
    <link href="./style/style.css" rel="stylesheet" />
   <script src="./scripts/frontend/init.js" defer></script>
-  <script src="./scripts/frontend/salaire.js" defer></script>
+  <script src="./scripts/frontend/revenus.js" defer></script>
   <script src="./scripts/frontend/depenses.js" defer></script>
   <script src="./scripts/frontend/utilisateurs.js" defer></script>
   <script src="./scripts/frontend/comptes.js" defer></script>
@@ -15,6 +15,8 @@
   <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
   <script src="./scripts/backend/utilisateurs.js" defer></script>
   <script src="./scripts/backend/comptes.js" defer></script>
+  <script src="./scripts/backend/revenus.js" defer></script>
+  <script src="./scripts/backend/categories.js" defer></script>
   <script src="./scripts/backend/backDepense.js" defer></script>
 </head>
 <body>
@@ -64,11 +66,7 @@
     <!-- PARTIE REVENUS -->
     <div class="partie">
         <h2 class="titrePartie">Revenus <i data-lucide="hand-coins"></i></h2>
-        <div class="zoneSaise">
-            <label> Salaire Sophie : </label>
-            <input type="number" id="salaireSophie" name="salaireSophie" /><br />
-            <label> Salaire Félix : </label>
-            <input type="number" id="salaireFelix" name="salaireFelix" /><br />
+        <div class="zoneRevenus">
         </div>
         <div id="prorata">
         </div>
@@ -78,6 +76,9 @@
     <div class="partie">
         <h2 class="titrePartie">Dépenses <i data-lucide="receipt-euro"></i></h2>
         <div class="zoneDepenses">
+        </div>
+        <div class="ajoutCategorie">
+            <input id="inputNewCategorie" type="text" placeholder="Nouvelle catégorie"><button class="btnAddCategorie" aria-label="Ajouter la catégorie"><i data-lucide="circle-plus"></i></button>
         </div>
     </div>
 

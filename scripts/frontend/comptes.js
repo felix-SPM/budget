@@ -2,17 +2,15 @@ const selectProprietaireCompte = document.getElementById('selectProprietaireComp
 const inputNewCompte = document.getElementById('inputNewCompte')
 
 // Intitulé d'un compte tel qu'affiché dans les dépenses : "propriétaire - libellé"
-// (libellé seul si le propriétaire est inconnu, chaîne vide si le compte n'existe pas)
+// (chaîne vide si le compte n'existe pas)
 function intituleCompte(compte){
     if (!compte) return ''
-    return 'idProprietaire' in compte
-        ? `${nomProprietaire(compte.idProprietaire)} - ${compte.libelle}`
-        : compte.libelle
+    return `${nomProprietaire(compte.idProprietaire)} - ${compte.libelle}`
 }
 
 // Intitulé d'un compte à partir de son id
 function intituleCompteParId(idCompte){
-    return intituleCompte((data.listeComptes || []).find(c => c.id === idCompte))
+    return intituleCompte(data.listeComptes.find(c => c.id === idCompte))
 }
 
 // Initialisation du formulaire au chargement de la page (avant tout fichier chargé)
@@ -102,7 +100,7 @@ document.querySelector('.listeComptes').addEventListener('keydown', (event)=>{
 
 // Remplace le propriétaire et l'intitulé par des champs pré-remplis
 function passerCompteEnModification(idCompte){
-    const compte = (data.listeComptes || []).find(c => c.id === Number(idCompte))
+    const compte = data.listeComptes.find(c => c.id === Number(idCompte))
     const ligne = document.querySelector(`.listeComptes tr[data-idcompte="${idCompte}"]`)
     if (!compte || !ligne) return
 
@@ -159,27 +157,21 @@ function majListeComptes(){
     const zone = document.querySelector('div.listeComptes')
     zone.innerHTML = ''
 
-    if ('listeComptes' in data){
-        const tabComptes = document.createElement('table')
-        data.listeComptes.forEach(compte => {
-            // On ignore les entrées sans ID
-            if (compte.id === '') return
-
-            const proprietaire = 'idProprietaire' in compte ? nomProprietaire(compte.idProprietaire) : '?'
-            const trCompte = document.createElement('tr')
-            trCompte.dataset.idcompte = compte.id
-            trCompte.innerHTML = `
-                <td class="proprietaireCompte">${echapperHTML(proprietaire)}</td>
-                <td class="ligneCompte">${echapperHTML(compte.libelle)}</td>
-                <td>
-                    <button class="btnSupp modifCompte" aria-label="Modifier le compte"><i data-lucide="pencil"></i></button>
-                    <button class="btnSupp suppCompte" aria-label="Supprimer le compte"><i data-lucide="circle-x"></i></button>
-                </td>
-            `
-            tabComptes.appendChild(trCompte)
-        })
-        zone.appendChild(tabComptes)
-    }
+    const tabComptes = document.createElement('table')
+    data.listeComptes.forEach(compte => {
+        const trCompte = document.createElement('tr')
+        trCompte.dataset.idcompte = compte.id
+        trCompte.innerHTML = `
+            <td class="proprietaireCompte">${echapperHTML(nomProprietaire(compte.idProprietaire))}</td>
+            <td class="ligneCompte">${echapperHTML(compte.libelle)}</td>
+            <td>
+                <button class="btnSupp modifCompte" aria-label="Modifier le compte"><i data-lucide="pencil"></i></button>
+                <button class="btnSupp suppCompte" aria-label="Supprimer le compte"><i data-lucide="circle-x"></i></button>
+            </td>
+        `
+        tabComptes.appendChild(trCompte)
+    })
+    zone.appendChild(tabComptes)
 
     majFormulaireCompte()
     lucide.createIcons()

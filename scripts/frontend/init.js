@@ -1,19 +1,17 @@
 // Fichier contenant les fonctions d'initialisation de la page
 
 function initFront(){
-    // Anciens fichiers : les charges des dépenses deviennent des utilisateurs (ou Joint)
-    const chargesNonTrouvees = migrerChargesVersUtilisateurs()
-    if (chargesNonTrouvees.length > 0){
-        alert(`Ces charges ne correspondent à aucun utilisateur : ${chargesNonTrouvees.join(', ')}.\n`
-            + `Les dépenses concernées n'ont plus de charge : modifiez-les pour en choisir une.`)
-    }
     creerDivCategories()
-    // Anciens fichiers : suppression du symbole des comptes (propriétaire déduit si absent)
-    migrerComptesSansSymbole()
-    // (met aussi à jour la liste des comptes)
+    // (met aussi à jour les comptes et les revenus)
     majListeUtilisateur()
 
     lucide.createIcons()
+}
+
+// Formate un montant en euros à la française : 1234.5 -> "1 234,50 €"
+const formateurEuros = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' })
+function formatMontant(montant){
+    return formateurEuros.format(montant)
 }
 
 // Échappe les caractères spéciaux HTML d'une valeur avant de l'insérer via innerHTML

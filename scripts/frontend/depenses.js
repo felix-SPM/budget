@@ -4,26 +4,32 @@ const parentClick = document.querySelector('.zoneDepenses')
 // Fonction appelée lorsqu'un click survient dans le div des dépenses
 parentClick.addEventListener("click", (event) => {
     // Déclaration de la variable qui va contenir le bouton cliqué
-    const button = event.target.closest('.boutonAffMasq, .suppDep, .addDep, .modifDep, .validModifDep, .annulModifDep')
+    const button = event.target.closest('.boutonAffMasq, .suppDep, .addDep, .modifDep, .validModifDep, .annulModifDep, .modifCat, .suppCat, .validModifCat, .annulModifCat')
     // Si ça retourne null, la fonction s'arrête
     if (!button) return;
 
-    const cat = Number(button.closest('.categorieDepense').dataset.idcategorie)
+    const bloc = button.closest('.categorieDepense')
+    const cat = Number(bloc.dataset.idcategorie)
+
+    // Boutons du titre de la catégorie (renommer, supprimer)
+    if (button.classList.contains('modifCat')) passerCategorieEnModification(bloc)
+    if (button.classList.contains('validModifCat')) validerRenommageCategorie(bloc)
+    if (button.classList.contains('annulModifCat')) afficherTitreCategorie(bloc)
+    if (button.classList.contains('suppCat')) supprimerCategorieDepuisBloc(bloc)
+
     // Tests pour savoir quel bouton est cliqué, et traitement
     if (button.classList.contains('boutonAffMasq')){
         // On déclare la variable contenant le div avec la classe dépense à laquelle le bouton appartient
         
-        if (button.dataset.action==="afficher"){
+        if (bloc.dataset.ouverte !== 'oui'){
             afficherContenu(cat)
-            button.dataset.action="masquer"
-            button.innerHTML='<i data-lucide="square-minus"></i>'
+            bloc.dataset.ouverte = 'oui'
         }
         else{
             masquerContenu(cat)
-            button.dataset.action="afficher"
-            button.innerHTML='<i data-lucide="square-plus"></i>'
+            bloc.dataset.ouverte = 'non'
         }
-        lucide.createIcons()
+        afficherTitreCategorie(bloc)
     }
 
     if (button.classList.contains('suppDep')){
@@ -56,6 +62,14 @@ parentClick.addEventListener("click", (event) => {
 
 // Clavier : Entrée pour ajouter/valider, Échap pour annuler une modification
 parentClick.addEventListener("keydown", (event) => {
+    // Renommage d'une catégorie
+    if (event.target.matches('.inputModifCategorie')){
+        const bloc = event.target.closest('.categorieDepense')
+        if (event.key === 'Enter') validerRenommageCategorie(bloc)
+        if (event.key === 'Escape') afficherTitreCategorie(bloc)
+        return
+    }
+
     const ligne = event.target.closest('tr.input, tr.edition')
     if (!ligne) return
     const cat = Number(ligne.closest('.categorieDepense').dataset.idcategorie)
@@ -98,7 +112,7 @@ function validerModificationDepuisLigne(cat, ligne){
 
 // Remplace l'affichage d'une dépense par des champs pré-remplis
 function passerEnModification(cat, idEntree){
-    const depense = data.entrees.find(e => e.id === cat).liste.find(d => d.id === idEntree)
+    const depense = trouverCategorie(cat).depenses.find(d => d.id === idEntree)
     const ligne = document.querySelector(`[data-idcategorie="${cat}"] tr[data-identree="${idEntree}"]`)
     if (!depense || !ligne) return
 
@@ -119,8 +133,8 @@ function passerEnModification(cat, idEntree){
 // toutes les entrées inscrites dans data
 function afficherContenu(idCategorie){
 
-    // Récupération des entrées de la catégorie
-    const ent = data.entrees.find(e => e.id === idCategorie)
+    // Récupération de la catégorie (et de ses dépenses)
+    const categorie = trouverCategorie(idCategorie)
 
     // Récupération du div dans lequel insérer le contenu
     const zone = document.querySelector('[data-idcategorie="'+idCategorie+'"] .contenu')
@@ -144,20 +158,18 @@ function afficherContenu(idCategorie){
 
     //Création du corps du tableau
     const tabCorps = document.createElement('tbody')
-    // Ajout de l'ID associé
-    //tabCorps.id = "tabEntrees"+idAAfficher
 
-    ent.liste.forEach(entrees => {
+    categorie.depenses.forEach(depense => {
         //création d'une ligne
         const ligne = document.createElement('tr')
-        // Association d'un paramètre data à l'ID de l'entrée
-        ligne.dataset.identree=entrees.id
+        // Association d'un paramètre data à l'ID de la dépense
+        ligne.dataset.identree=depense.id
         //Remplissage
         ligne.innerHTML = `
-            <td class="tdDepLib">${echapperHTML(entrees.libelle)}</td>
-            <td class="tdDepMon">${Number(entrees.montant).toFixed(2)} €</td>
-            <td class="tdDepCha">${echapperHTML(nomProprietaire(entrees.idCharge))}</td>
-            <td class="tdDepCom">${echapperHTML(intituleCompteParId(entrees.idComptePayeDepuis))}</td>
+            <td class="tdDepLib">${echapperHTML(depense.libelle)}</td>
+            <td class="tdDepMon">${Number(depense.montant).toFixed(2)} €</td>
+            <td class="tdDepCha">${echapperHTML(nomProprietaire(depense.idCharge))}</td>
+            <td class="tdDepCom">${echapperHTML(intituleCompteParId(depense.idComptePayeDepuis))}</td>
             <td class="tdDepBut">
                 <button class="modifDep" aria-label="Modifier la dépense"><i data-lucide="pencil"></i></button>
                 <button class="suppDep" aria-label="Supprimer la dépense"><i data-lucide="circle-x"></i></button>
@@ -176,8 +188,8 @@ function afficherContenu(idCategorie){
 // Réaffiche les catégories actuellement dépliées
 // (utile quand la liste des comptes change, pour mettre à jour les menus déroulants)
 function rafraichirCategoriesOuvertes(){
-    document.querySelectorAll('.boutonAffMasq[data-action="masquer"]').forEach(bouton => {
-        afficherContenu(Number(bouton.closest('.categorieDepense').dataset.idcategorie))
+    document.querySelectorAll('.categorieDepense[data-ouverte="oui"]').forEach(bloc => {
+        afficherContenu(Number(bloc.dataset.idcategorie))
     })
 }
 
@@ -195,30 +207,125 @@ function creerDivCategories(){
     // Suppression au cas où
     zone.innerHTML=''
 
-    // Parcours de toutes les catégories
-    data.categories.forEach(cat => {
-        // Création d'un div par catégorie
-        const bloc = document.createElement('div')
-        // Insertion de l'id de la catégorie en data
-        bloc.dataset.idcategorie = cat.id
-        // Association à la classe categorieDepense
-        bloc.classList.add("categorieDepense")
-        // Création du titre et des boutons
-        bloc.innerHTML = `
-            <h2>
-                ${echapperHTML(cat.nom)}
-                <button class="boutonAffMasq" data-action="afficher">
-                    <i data-lucide="square-plus"></i>
-                </button>
-            </h2>
-            <div class="contenu">
-            </div>
-        `
-        // Intégration du bloc dans la zone de dépenses
-        zone.appendChild(bloc)
-    })
-    //Création des icones
+    // Un bloc par catégorie
+    categoriesTriees().forEach(cat => creerBlocCategorie(cat))
+}
+
+// Crée le bloc d'une catégorie (replié) à la fin de la zone des dépenses
+function creerBlocCategorie(cat){
+    const bloc = document.createElement('div')
+    // Insertion de l'id de la catégorie en data
+    bloc.dataset.idcategorie = cat.id
+    // Catégorie repliée au départ
+    bloc.dataset.ouverte = 'non'
+    bloc.classList.add("categorieDepense")
+    bloc.innerHTML = `
+        <h2 class="titreCategorie"></h2>
+        <div class="contenu">
+        </div>
+    `
+    document.querySelector("div.zoneDepenses").appendChild(bloc)
+    // Création du titre et des boutons
+    afficherTitreCategorie(bloc)
+    return bloc
+}
+
+// Création d'une catégorie depuis le champ de saisie
+const inputNewCategorie = document.getElementById('inputNewCategorie')
+
+function ajoutCategorieDepuisSaisie(){
+    const resultat = ajouterCategorie(inputNewCategorie.value)
+    if (typeof resultat === 'string'){
+        alert(resultat)
+        return
+    }
+    inputNewCategorie.value = ''
+    // On ajoute uniquement le nouveau bloc (les autres gardent leur état ouvert/fermé)
+    creerBlocCategorie(resultat)
+    ordonnerBlocsCategories()
+}
+
+document.querySelector('.ajoutCategorie').addEventListener('click', (event)=>{
+    if (!event.target.closest('.btnAddCategorie')) return
+    ajoutCategorieDepuisSaisie()
+})
+
+inputNewCategorie.addEventListener('keydown', (event)=>{
+    if (event.key === 'Enter') ajoutCategorieDepuisSaisie()
+})
+
+// (Ré)affiche le titre d'une catégorie : nom, bouton déplier/replier, renommer, supprimer
+function afficherTitreCategorie(bloc){
+    const cat = trouverCategorie(bloc.dataset.idcategorie)
+    if (!cat) return
+    const ouverte = bloc.dataset.ouverte === 'oui'
+
+    bloc.querySelector('.titreCategorie').innerHTML = `
+        <span class="nomCategorie">${echapperHTML(cat.nom)}</span>
+        <button class="boutonAffMasq" aria-label="${ouverte ? 'Replier' : 'Déplier'} la catégorie">
+            <i data-lucide="${ouverte ? 'square-minus' : 'square-plus'}"></i>
+        </button>
+        <button class="btnSupp modifCat" aria-label="Renommer la catégorie"><i data-lucide="pencil"></i></button>
+        <button class="btnSupp suppCat" aria-label="Supprimer la catégorie"><i data-lucide="circle-x"></i></button>
+    `
     lucide.createIcons()
+}
+
+// Remplace le nom de la catégorie par un champ pré-rempli
+function passerCategorieEnModification(bloc){
+    // Une seule catégorie renommée à la fois
+    document.querySelectorAll('.categorieDepense').forEach(autre => {
+        if (autre !== bloc && autre.querySelector('.inputModifCategorie')) afficherTitreCategorie(autre)
+    })
+
+    const cat = trouverCategorie(bloc.dataset.idcategorie)
+    if (!cat) return
+
+    bloc.querySelector('.titreCategorie').innerHTML = `
+        <input class="inputModifCategorie" type="text" value="${echapperHTML(cat.nom)}" aria-label="Nom de la catégorie">
+        <button class="btnSupp validModifCat" aria-label="Valider le renommage"><i data-lucide="circle-check"></i></button>
+        <button class="btnSupp annulModifCat" aria-label="Annuler le renommage"><i data-lucide="undo-2"></i></button>
+    `
+    lucide.createIcons()
+    const input = bloc.querySelector('.inputModifCategorie')
+    input.focus()
+    input.select()
+}
+
+function validerRenommageCategorie(bloc){
+    const resultat = renommerCategorie(bloc.dataset.idcategorie, bloc.querySelector('.inputModifCategorie').value)
+    if (resultat !== true){
+        alert(resultat)
+        return
+    }
+    afficherTitreCategorie(bloc)
+    // Le nouveau nom peut changer la position de la catégorie
+    ordonnerBlocsCategories()
+}
+
+// Replace les blocs des catégories dans l'ordre alphabétique,
+// sans les recréer (chaque bloc garde son état ouvert/fermé et sa saisie en cours)
+function ordonnerBlocsCategories(){
+    const zone = document.querySelector("div.zoneDepenses")
+    categoriesTriees().forEach(cat => {
+        const bloc = zone.querySelector(`.categorieDepense[data-idcategorie="${cat.id}"]`)
+        if (bloc) zone.appendChild(bloc)
+    })
+}
+
+function supprimerCategorieDepuisBloc(bloc){
+    const idCategorie = Number(bloc.dataset.idcategorie)
+    const cat = trouverCategorie(idCategorie)
+    if (!cat) return
+
+    // Confirmation, avec avertissement si des dépenses seront supprimées
+    const nb = nbDepensesCategorie(idCategorie)
+    const message = nb > 0
+        ? `La catégorie "${cat.nom}" contient ${nb} dépense(s), qui seront supprimées aussi.\nSupprimer quand même ?`
+        : `Supprimer la catégorie "${cat.nom}" ?`
+    if (!confirm(message)) return
+
+    if (supprimerCategorie(idCategorie)) bloc.remove()
 }
 
 // Construit les 4 cellules de saisie d'une dépense (libellé, montant, charge, compte)
@@ -278,10 +385,3 @@ function afficherInputEntree(categorie, zone){
     zone.appendChild(ligne)
 }
 
-function reduireZone(idCategorie){
-    //Récuperation de l'objet "catégorie" avec l'id
-    const cat = data.categories.find(c => c.id === idCategorie);
-
-    //Récupération de l'objet DOM correspondant
-    const zone = document.getElementById("tabEntrees"+cat.nom)
-}

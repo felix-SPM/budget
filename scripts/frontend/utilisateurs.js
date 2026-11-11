@@ -107,45 +107,38 @@ function validerModificationUtilisateur(ligne){
 
 // Fonction de mise à jour de la liste des utilisateurs
 function majListeUtilisateur(){
-    // test qu'il y a bien une propriété user dans data sinon pas de mise à jour nécessaire
-    if ('user' in data) {
-        // Positionnement dans le div dans lequel la liste doit être affichée
-        const zone=document.querySelector('div.listeUtilisateurs')
+    // Positionnement dans le div dans lequel la liste doit être affichée
+    const zone=document.querySelector('div.listeUtilisateurs')
+    // On vide la zone
+    zone.innerHTML=''
 
-        // On vide la zone
-        zone.innerHTML=''
+    // Création du tableau qui contiendra une ligne par utilisateur
+    const tabUser = document.createElement('table')
+    data.user.forEach(utilisateur => {
+        const trUser = document.createElement('tr')
+        // Association d'une propriété au TR avec l'id de l'utilisateur
+        trUser.dataset.idutilisateur=utilisateur.id
+        // Création du contenu avec le nom, puis les boutons modifier et supprimer
+        trUser.innerHTML=`
+            <td class="ligneUtilisateur">
+                ${echapperHTML(utilisateur.nom)}
+            </td>
+            <td>
+                <button class="btnSupp modifUser" aria-label="Modifier l'utilisateur"><i data-lucide="pencil"></i></button>
+                <button class="btnSupp suppUser" aria-label="Supprimer l'utilisateur"><i data-lucide="circle-x"></i></button>
+            </td>
+            `
+        tabUser.appendChild(trUser)
+    });
+    // Ajout du tableau dans le div
+    zone.appendChild(tabUser)
 
-        // Création du tableau qui contiendra une ligne par utilisateur
-        const tabUser = document.createElement('table')
-        // Boucle sur chacune des entrées de la propriété User
-        data.user.forEach(utilisateur => {
-            // Si l'ID n'est pas nul on affiche, sinon on ne fait rien
-            if (!(utilisateur.id === "")){
-                // Création d'une ligne
-                const trUser = document.createElement('tr')
-                // Association d'une propriété au TR avec l'id de l'utilisateur
-                trUser.dataset.idutilisateur=utilisateur.id
-                // Création du contenu avec le nom, puis les boutons modifier et supprimer
-                trUser.innerHTML=`
-                    <td class="ligneUtilisateur">
-                        ${echapperHTML(utilisateur.nom)}
-                    </td>
-                    <td>
-                        <button class="btnSupp modifUser" aria-label="Modifier l'utilisateur"><i data-lucide="pencil"></i></button>
-                        <button class="btnSupp suppUser" aria-label="Supprimer l'utilisateur"><i data-lucide="circle-x"></i></button>
-                    </td>
-                    `
-                // Ajout de la ligne dans la table
-                tabUser.appendChild(trUser)
-            }
-        });
-        // Ajout du tableau dans le div
-        zone.appendChild(tabUser)
-    }
     // Les propriétaires possibles des comptes dépendent des utilisateurs
     majListeComptes()
     // Ainsi que les charges proposées dans les dépenses
     rafraichirCategoriesOuvertes()
+    // Et les lignes de revenus (une par utilisateur, + Joint)
+    majRevenus()
     // Génération des boutons
     lucide.createIcons()
 }

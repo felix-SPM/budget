@@ -18,11 +18,8 @@ function ajouterUtilisateur(nom){
     const erreur = validerNomUtilisateur(nom)
     if (erreur) return erreur
 
-    // si la propriété user n'existe pas, on la crée
-    if (!('user' in data)) data.user = []
-
-    // Recherche d'un ID disponible (on ignore les éventuels ID vides)
-    const ids = data.user.map(u => Number(u.id)).filter(id => id > 0)
+    // Recherche d'un ID disponible
+    const ids = data.user.map(u => u.id)
     const idNew = ids.length > 0 ? Math.max(...ids) + 1 : 1
 
     // Ajout d'un membre dans data user
@@ -56,6 +53,8 @@ function suppressionUtilisateur(idSupp){
     if (!(indexSupp===-1)){
         // Suppression de l'entrée par son numéro d'index
         const supp = data.user.splice(indexSupp,1)
+        // Son revenu n'a plus lieu d'être
+        supprimerRevenu(Number(idSupp))
         // Si l'élement avec le bon id a été supprimé, TRUE est renvoyé
         return supp.length > 0 && supp[0].id === Number(idSupp)
     }
