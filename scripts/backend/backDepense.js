@@ -15,26 +15,56 @@ function suppDepData(idEntree, idCategorie){
     return supp.length > 0 && supp[0].id === Number(idEntree)
 }
 
-function ajoutDepData(idCategorie, input){
+// Vérifie les valeurs saisies pour une dépense
+// Renvoie un message d'erreur, ou null si tout est correct
+function validerDepense(valeurs){
+    if (valeurs.libelle === '') return 'Le libellé de la dépense est obligatoire.'
+    if (!Number.isFinite(valeurs.montant)) return 'Le montant de la dépense est obligatoire.'
+    return null
+}
 
-    const categorie = data.entrees.find(e => e.id === idCategorie);
-    if (!categorie) return false;
+// Ajoute une dépense dans une catégorie
+// valeurs = { libelle, montant, idComptePayeDepuis, idCharge }
+// Renvoie true si l'ajout est fait, sinon un message d'erreur (chaîne)
+function ajoutDepData(idCategorie, valeurs){
+
+    const categorie = data.entrees.find(e => e.id === Number(idCategorie));
+    if (!categorie) return 'Catégorie introuvable.';
+
+    const erreur = validerDepense(valeurs)
+    if (erreur) return erreur
 
     const nouvelId =
         categorie.liste.length > 0
             ? Math.max(...categorie.liste.map(e => e.id)) + 1
             : 1;
 
-    const nouvelleEntree = {
+    categorie.liste.push({
         id: nouvelId,
-        libelle: input.querySelector('input.tdDepLib').value.trim(),
-        montant: Number(input.querySelector('input.tdDepMon').value),
-        idComptePayeDepuis: Number(input.querySelector('select.tdDepCompte').value),
-        idCharge: Number(input.querySelector('select.tdDepCharge').value)
-    };
+        libelle: valeurs.libelle,
+        montant: valeurs.montant,
+        idComptePayeDepuis: valeurs.idComptePayeDepuis,
+        idCharge: valeurs.idCharge
+    });
+    return true
+}
 
-    const longueurAvant = categorie.liste.length;
-    const nouvelleLongueur = categorie.liste.push(nouvelleEntree);
+// Modifie une dépense existante (l'id de la dépense ne change pas)
+// Renvoie true si la modification est faite, sinon un message d'erreur (chaîne)
+function modifDepData(idCategorie, idEntree, valeurs){
 
-    return nouvelleLongueur === longueurAvant + 1;
+    const categorie = data.entrees.find(e => e.id === Number(idCategorie));
+    if (!categorie) return 'Catégorie introuvable.';
+
+    const depense = categorie.liste.find(d => d.id === Number(idEntree))
+    if (!depense) return 'Dépense introuvable.'
+
+    const erreur = validerDepense(valeurs)
+    if (erreur) return erreur
+
+    depense.libelle = valeurs.libelle
+    depense.montant = valeurs.montant
+    depense.idComptePayeDepuis = valeurs.idComptePayeDepuis
+    depense.idCharge = valeurs.idCharge
+    return true
 }

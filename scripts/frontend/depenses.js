@@ -4,7 +4,7 @@ const parentClick = document.querySelector('.zoneDepenses')
 // Fonction appelée lorsqu'un click survient dans le div des dépenses
 parentClick.addEventListener("click", (event) => {
     // Déclaration de la variable qui va contenir le bouton cliqué
-    const button = event.target.closest('.boutonAffMasq, .suppDep, .addDep')
+    const button = event.target.closest('.boutonAffMasq, .suppDep, .addDep, .modifDep, .validModifDep, .annulModifDep')
     // Si ça retourne null, la fonction s'arrête
     if (!button) return;
 
@@ -34,14 +34,85 @@ parentClick.addEventListener("click", (event) => {
     }
 
     if (button.classList.contains('addDep')){
-        // Récupération de la ligne contenant les informations
-        const entree = button.closest("tr.input")
-        
-        if(ajoutDepData(cat, entree)){
-            afficherContenu(cat)
-        }
+        ajouterDepenseDepuisLigne(cat, button.closest("tr.input"))
+    }
+
+    // Passage d'une dépense en mode modification
+    if (button.classList.contains('modifDep')){
+        const idEntree = Number(button.closest('tr').dataset.identree)
+        // On réaffiche la catégorie pour annuler une éventuelle autre modification en cours
+        afficherContenu(cat)
+        passerEnModification(cat, idEntree)
+    }
+
+    if (button.classList.contains('validModifDep')){
+        validerModificationDepuisLigne(cat, button.closest('tr.edition'))
+    }
+
+    if (button.classList.contains('annulModifDep')){
+        afficherContenu(cat)
     }
 })
+
+// Clavier : Entrée pour ajouter/valider, Échap pour annuler une modification
+parentClick.addEventListener("keydown", (event) => {
+    const ligne = event.target.closest('tr.input, tr.edition')
+    if (!ligne) return
+    const cat = Number(ligne.closest('.categorieDepense').dataset.idcategorie)
+
+    if (event.key === 'Enter'){
+        if (ligne.classList.contains('input')) ajouterDepenseDepuisLigne(cat, ligne)
+        else validerModificationDepuisLigne(cat, ligne)
+    }
+    if (event.key === 'Escape' && ligne.classList.contains('edition')){
+        afficherContenu(cat)
+    }
+})
+
+// Lit les valeurs saisies dans une ligne (ajout ou modification)
+function lireSaisieDepense(ligne){
+    const montant = ligne.querySelector('input.tdDepMon').value
+    return {
+        libelle: ligne.querySelector('input.tdDepLib').value.trim(),
+        montant: montant === '' ? NaN : Number(montant),
+        idComptePayeDepuis: Number(ligne.querySelector('select.tdDepCompte').value),
+        idCharge: Number(ligne.querySelector('select.tdDepCharge').value)
+    }
+}
+
+function ajouterDepenseDepuisLigne(cat, ligne){
+    const resultat = ajoutDepData(cat, lireSaisieDepense(ligne))
+    if (resultat === true){
+        afficherContenu(cat)
+        // On replace le curseur dans le libellé pour enchaîner les saisies
+        document.querySelector(`[data-idcategorie="${cat}"] tr.input input.tdDepLib`).focus()
+    }
+    else alert(resultat)
+}
+
+function validerModificationDepuisLigne(cat, ligne){
+    const resultat = modifDepData(cat, ligne.dataset.identree, lireSaisieDepense(ligne))
+    if (resultat === true) afficherContenu(cat)
+    else alert(resultat)
+}
+
+// Remplace l'affichage d'une dépense par des champs pré-remplis
+function passerEnModification(cat, idEntree){
+    const depense = data.entrees.find(e => e.id === cat).liste.find(d => d.id === idEntree)
+    const ligne = document.querySelector(`[data-idcategorie="${cat}"] tr[data-identree="${idEntree}"]`)
+    if (!depense || !ligne) return
+
+    ligne.classList.add('edition')
+    ligne.innerHTML = `
+        ${cellulesSaisieDepense(depense)}
+        <td class="tdDepBut">
+            <button class="validModifDep" aria-label="Valider la modification"><i data-lucide="circle-check"></i></button>
+            <button class="annulModifDep" aria-label="Annuler la modification"><i data-lucide="undo-2"></i></button>
+        </td>
+    `
+    lucide.createIcons()
+    ligne.querySelector('input.tdDepLib').focus()
+}
 
 // La fonction reçoit en entrée le nom de la catégorie
 // Elle doit afficher dans la zone correspondante en HTML
@@ -87,7 +158,10 @@ function afficherContenu(idCategorie){
             <td class="tdDepMon">${Number(entrees.montant).toFixed(2)} €</td>
             <td class="tdDepCha">${echapperHTML(rechLibelle(data.listeCharge, entrees.idCharge))}</td>
             <td class="tdDepCom">${echapperHTML(rechLibelle(data.listeComptes, entrees.idComptePayeDepuis))}</td>
-            <td class="tdDepBut"><button class="suppDep"><i data-lucide="circle-x"></i></button></td>
+            <td class="tdDepBut">
+                <button class="modifDep" aria-label="Modifier la dépense"><i data-lucide="pencil"></i></button>
+                <button class="suppDep" aria-label="Supprimer la dépense"><i data-lucide="circle-x"></i></button>
+            </td>
         `
         //Ajout de la ligné créée
         tabCorps.appendChild(ligne)
@@ -147,16 +221,16 @@ function creerDivCategories(){
     lucide.createIcons()
 }
 
-function afficherInputEntree(categorie, zone){
+// Construit les 4 cellules de saisie d'une dépense (libellé, montant, charge, compte)
+// "depense" sert à pré-remplir les champs (modification) ; vide pour un ajout
+function cellulesSaisieDepense(depense = {}){
 
-    //Création de la ligne qui accueillera les INPUT
-    const ligne = document.createElement('tr')
-    // Association de la ligne à une classe input
-    ligne.classList.add("input")
+    // Attribut "selected" pour l'option correspondant à la valeur actuelle
+    const selection = (id, valeur) => id === valeur ? ' selected' : ''
 
     //Parcours de toutes les charges et création des option correspondantes pour le menu déroulant
     const optionsCharges = data.listeCharge.map(entree => {
-        return `<option value="${echapperHTML(entree.id)}">${echapperHTML(entree.libelle)}</option>`;
+        return `<option value="${echapperHTML(entree.id)}"${selection(entree.id, depense.idCharge)}>${echapperHTML(entree.libelle)}</option>`;
     }).join('');
 
     //Parcours de tous les comptes et création des option correspondantes pour le menu déroulant
@@ -165,13 +239,15 @@ function afficherInputEntree(categorie, zone){
         const intitule = 'idProprietaire' in entree
             ? `${nomProprietaire(entree.idProprietaire)} - ${entree.libelle}`
             : entree.libelle
-        return `<option value="${echapperHTML(entree.id)}">${echapperHTML(intitule)}</option>`;
+        return `<option value="${echapperHTML(entree.id)}"${selection(entree.id, depense.idComptePayeDepuis)}>${echapperHTML(intitule)}</option>`;
     }).join('');
 
-    // Remplissage
-    ligne.innerHTML = `
-        <td><input class="tdDepLib" type="text" name="libelle" /></td>
-        <td><input class="tdDepMon" type="number" name="montant" /></td>
+    const libelle = depense.libelle !== undefined ? echapperHTML(depense.libelle) : ''
+    const montant = depense.montant !== undefined ? echapperHTML(depense.montant) : ''
+
+    return `
+        <td><input class="tdDepLib" type="text" name="libelle" value="${libelle}" /></td>
+        <td><input class="tdDepMon" type="number" step="0.01" name="montant" value="${montant}" /></td>
         <td>
             <select class="tdDepCharge" name="choixCharge">
                 ${optionsCharges}
@@ -182,6 +258,19 @@ function afficherInputEntree(categorie, zone){
                 ${optionsComptes}
             </select>
         </td>
+    `
+}
+
+function afficherInputEntree(categorie, zone){
+
+    //Création de la ligne qui accueillera les INPUT
+    const ligne = document.createElement('tr')
+    // Association de la ligne à une classe input
+    ligne.classList.add("input")
+
+    // Remplissage
+    ligne.innerHTML = `
+        ${cellulesSaisieDepense()}
         <td>
             <button class="addDep">
                 <i data-lucide="circle-plus"></i>

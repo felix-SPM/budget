@@ -66,3 +66,14 @@
     width: 25px;
     height: 25px;
 }
+/* Boutons de modification d'une dépense */
+.modifDep, .validModifDep, .annulModifDep{
+    border: 0cm;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.modifDep svg, .validModifDep svg, .annulModifDep svg{
+    width: 15px;
+    height: 15px;
+}
