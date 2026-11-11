@@ -157,7 +157,7 @@ function afficherContenu(idCategorie){
             <td class="tdDepLib">${echapperHTML(entrees.libelle)}</td>
             <td class="tdDepMon">${Number(entrees.montant).toFixed(2)} €</td>
             <td class="tdDepCha">${echapperHTML(rechLibelle(data.listeCharge, entrees.idCharge))}</td>
-            <td class="tdDepCom">${echapperHTML(rechLibelle(data.listeComptes, entrees.idComptePayeDepuis))}</td>
+            <td class="tdDepCom">${echapperHTML(intituleCompteParId(entrees.idComptePayeDepuis))}</td>
             <td class="tdDepBut">
                 <button class="modifDep" aria-label="Modifier la dépense"><i data-lucide="pencil"></i></button>
                 <button class="suppDep" aria-label="Supprimer la dépense"><i data-lucide="circle-x"></i></button>
@@ -234,12 +234,9 @@ function cellulesSaisieDepense(depense = {}){
     }).join('');
 
     //Parcours de tous les comptes et création des option correspondantes pour le menu déroulant
-    // Intitulé : "propriétaire - libellé du compte" (libellé seul si le propriétaire est inconnu)
+    // Intitulé : "propriétaire - libellé du compte" (même affichage que dans le tableau)
     const optionsComptes = data.listeComptes.map(entree => {
-        const intitule = 'idProprietaire' in entree
-            ? `${nomProprietaire(entree.idProprietaire)} - ${entree.libelle}`
-            : entree.libelle
-        return `<option value="${echapperHTML(entree.id)}"${selection(entree.id, depense.idComptePayeDepuis)}>${echapperHTML(intitule)}</option>`;
+        return `<option value="${echapperHTML(entree.id)}"${selection(entree.id, depense.idComptePayeDepuis)}>${echapperHTML(intituleCompte(entree))}</option>`;
     }).join('');
 
     const libelle = depense.libelle !== undefined ? echapperHTML(depense.libelle) : ''

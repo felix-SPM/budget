@@ -3,6 +3,20 @@ const prefixeSymboleCompte = document.getElementById('prefixeSymboleCompte')
 const inputSymboleCompte = document.getElementById('inputSymboleCompte')
 const inputNewCompte = document.getElementById('inputNewCompte')
 
+// Intitulé d'un compte tel qu'affiché dans les dépenses : "propriétaire - libellé"
+// (libellé seul si le propriétaire est inconnu, chaîne vide si le compte n'existe pas)
+function intituleCompte(compte){
+    if (!compte) return ''
+    return 'idProprietaire' in compte
+        ? `${nomProprietaire(compte.idProprietaire)} - ${compte.libelle}`
+        : compte.libelle
+}
+
+// Intitulé d'un compte à partir de son id
+function intituleCompteParId(idCompte){
+    return intituleCompte((data.listeComptes || []).find(c => c.id === idCompte))
+}
+
 // Initialisation du formulaire au chargement de la page (avant tout fichier chargé)
 document.addEventListener('DOMContentLoaded', majListeComptes)
 
