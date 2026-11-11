@@ -25,9 +25,16 @@ function lettreProprietaire(idProprietaire){
     return nom[0].normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase()
 }
 
-// Nettoie la partie saisie du symbole : majuscules, lettres et chiffres uniquement
+// Nombre de lettres imposé pour la partie saisie du symbole
+const LONGUEUR_SUFFIXE_SYMBOLE = 3
+
+// Nettoie la partie saisie du symbole : lettres majuscules sans accent uniquement, 3 au maximum
 function nettoyerSuffixeSymbole(suffixe){
-    return String(suffixe).toUpperCase().replace(/[^A-Z0-9]/g, '')
+    return String(suffixe)
+        .normalize('NFD').replace(/[̀-ͯ]/g, '')
+        .toUpperCase()
+        .replace(/[^A-Z]/g, '')
+        .slice(0, LONGUEUR_SUFFIXE_SYMBOLE)
 }
 
 // Fonction pour ajouter un compte
@@ -42,11 +49,11 @@ function ajouterCompte(libelle, idProprietaire, suffixeSymbole){
     if (libelle === '') return 'Le libellé du compte est obligatoire.'
     if (lettre === '') return 'Le propriétaire du compte est invalide.'
     if (idProprietaire === ID_JOINT && !jointDisponible()) return 'Un compte joint nécessite au moins deux utilisateurs.'
-    if (suffixe === '') return 'La partie du symbole après le point est obligatoire.'
+    if (suffixe.length !== LONGUEUR_SUFFIXE_SYMBOLE) return `La partie du symbole après le point doit contenir exactement ${LONGUEUR_SUFFIXE_SYMBOLE} lettres.`
 
     const symbole = `${lettre}.${suffixe}`
+    // Seul le symbole doit être unique (plusieurs comptes peuvent avoir le même libellé)
     if (data.listeComptes.some(c => c.symbole === symbole)) return `Le symbole "${symbole}" est déjà utilisé.`
-    if (data.listeComptes.some(c => String(c.libelle).toLowerCase() === libelle.toLowerCase())) return `Un compte "${libelle}" existe déjà.`
 
     // Recherche d'un ID disponible (on ignore les éventuels ID vides)
     const ids = data.listeComptes.map(c => Number(c.id)).filter(id => id > 0)

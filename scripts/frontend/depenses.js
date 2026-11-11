@@ -160,8 +160,12 @@ function afficherInputEntree(categorie, zone){
     }).join('');
 
     //Parcours de tous les comptes et création des option correspondantes pour le menu déroulant
+    // Intitulé : "propriétaire - libellé du compte" (libellé seul si le propriétaire est inconnu)
     const optionsComptes = data.listeComptes.map(entree => {
-        return `<option value="${echapperHTML(entree.id)}">${echapperHTML(entree.libelle)}</option>`;
+        const intitule = 'idProprietaire' in entree
+            ? `${nomProprietaire(entree.idProprietaire)} - ${entree.libelle}`
+            : entree.libelle
+        return `<option value="${echapperHTML(entree.id)}">${echapperHTML(intitule)}</option>`;
     }).join('');
 
     // Remplissage
