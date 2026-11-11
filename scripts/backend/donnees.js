@@ -4,7 +4,7 @@ let data = {
         {id:"", nom:""}
     ],
     listeComptes:[
-        {id:"", symbole:"", libelle:""}
+        {id:"", libelle:"", idProprietaire:""}
     ],
     categories:[
         {id:"", nom:""}

@@ -8,8 +8,8 @@ function initFront(){
             + `Les dépenses concernées n'ont plus de charge : modifiez-les pour en choisir une.`)
     }
     creerDivCategories()
-    // Anciens fichiers : on déduit le propriétaire des comptes à partir de leur symbole
-    completerProprietairesComptes()
+    // Anciens fichiers : suppression du symbole des comptes (propriétaire déduit si absent)
+    migrerComptesSansSymbole()
     // (met aussi à jour la liste des comptes)
     majListeUtilisateur()
 

@@ -31,7 +31,7 @@ function ajouterUtilisateur(nom){
 }
 
 // fonction pour renommer un utilisateur
-// Si l'initiale change, le symbole de ses comptes est mis à jour (ex : F.LIV -> P.LIV)
+// (comptes et dépenses pointent sur son id : rien d'autre à mettre à jour)
 // Renvoie true si la modification est faite, sinon un message d'erreur (chaîne)
 function modifierUtilisateur(idUser, nouveauNom){
     idUser = Number(idUser)
@@ -43,33 +43,7 @@ function modifierUtilisateur(idUser, nouveauNom){
     const erreur = validerNomUtilisateur(nouveauNom, idUser)
     if (erreur) return erreur
 
-    // Calcul des nouveaux symboles des comptes de l'utilisateur
-    const ancienneLettre = lettreProprietaire(idUser)
-    const ancienNom = user.nom
     user.nom = nouveauNom
-    const nouvelleLettre = lettreProprietaire(idUser)
-    user.nom = ancienNom
-
-    const comptesUser = (data.listeComptes || []).filter(c => c.idProprietaire === idUser)
-    const nouveauxSymboles = new Map()
-    if (nouvelleLettre !== ancienneLettre){
-        comptesUser.forEach(c => {
-            const suffixe = String(c.symbole).split('.').slice(1).join('.')
-            nouveauxSymboles.set(c, `${nouvelleLettre}.${suffixe}`)
-        })
-        // On refuse si un nouveau symbole est déjà pris par un autre compte
-        const autresSymboles = (data.listeComptes || [])
-            .filter(c => !comptesUser.includes(c))
-            .map(c => c.symbole)
-        const conflits = [...nouveauxSymboles.values()].filter(s => autresSymboles.includes(s))
-        if (conflits.length > 0){
-            return `Impossible de renommer : le(s) symbole(s) ${conflits.join(', ')} existe(nt) déjà pour un autre compte.`
-        }
-    }
-
-    // Application des modifications
-    user.nom = nouveauNom
-    nouveauxSymboles.forEach((symbole, compte) => compte.symbole = symbole)
     return true
 }
 

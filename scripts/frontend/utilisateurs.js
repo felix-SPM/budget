@@ -101,7 +101,7 @@ function validerModificationUtilisateur(ligne){
         alert(resultat)
         return
     }
-    // Met à jour la liste, les comptes (symboles, propriétaires) et les dépenses ouvertes
+    // Met à jour la liste, les comptes (propriétaires) et les dépenses ouvertes
     majListeUtilisateur()
 }
 

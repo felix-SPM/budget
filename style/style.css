@@ -111,35 +111,9 @@ body::before {
 #inputNewCompte{
     width:200px;
 }
-.symboleCompte{
-    font-weight: bold;
-    padding-right: 10px;
-}
-
-/* Champ symbole : lettre imposée (propriétaire) + partie saisie */
-.champSymbole{
-    display: inline-flex;
-    align-items: center;
-    border: 1px solid #767676;
-    border-radius: 2px;
-    background-color: white;
-    padding-left: 4px;
-}
-
-#prefixeSymboleCompte{
-    font-weight: bold;
-    color: darkslateblue;
-}
-
-#inputSymboleCompte{
-    border: none;
-    outline: none;
-    width: 4.5em;
-    text-transform: uppercase;
-}
 
 .proprietaireCompte{
     font-style: italic;
     color: #555;
-    padding-left: 10px;
+    padding-right: 10px;
 }

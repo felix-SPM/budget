@@ -1,3 +1,6 @@
+// Un compte : { id, libelle, idProprietaire }
+// idProprietaire = id d'un utilisateur, ou ID_JOINT pour un compte commun
+
 // Identifiant réservé au propriétaire "Joint" (compte commun à tous les utilisateurs)
 const ID_JOINT = 0
 
@@ -26,65 +29,79 @@ function nomProprietaire(idProprietaire){
     return user ? user.nom : '?'
 }
 
-// Première lettre (majuscule, sans accent) du propriétaire : "Joint" -> J, "Félix" -> F
-function lettreProprietaire(idProprietaire){
-    const nom = nomProprietaire(idProprietaire)
-    if (nom === '?' || nom === '') return ''
-    return nom[0].normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase()
-}
-
-// Nombre de lettres imposé pour la partie saisie du symbole
-const LONGUEUR_SUFFIXE_SYMBOLE = 3
-
-// Nettoie la partie saisie du symbole : lettres majuscules sans accent uniquement, 3 au maximum
-function nettoyerSuffixeSymbole(suffixe){
-    return String(suffixe)
-        .normalize('NFD').replace(/[̀-ͯ]/g, '')
-        .toUpperCase()
-        .replace(/[^A-Z]/g, '')
-        .slice(0, LONGUEUR_SUFFIXE_SYMBOLE)
+// Vérifie le libellé (déjà nettoyé des espaces) et le propriétaire d'un compte
+// idIgnore : compte à ne pas comparer (celui qu'on modifie)
+// Renvoie un message d'erreur, ou null si tout est correct
+function validerCompte(libelle, idProprietaire, idIgnore = null){
+    if (libelle === '') return 'Le libellé du compte est obligatoire.'
+    if (!listeProprietaires().some(p => p.id === idProprietaire)) return 'Le propriétaire du compte est invalide.'
+    // Un même propriétaire ne peut pas avoir deux comptes du même nom
+    // (ils seraient impossibles à distinguer dans les dépenses : "Félix - Courant")
+    const doublon = (data.listeComptes || []).some(c =>
+        c.id !== idIgnore
+        && c.idProprietaire === idProprietaire
+        && String(c.libelle).toLowerCase() === libelle.toLowerCase()
+    )
+    if (doublon) return `${nomProprietaire(idProprietaire)} a déjà un compte "${libelle}".`
+    return null
 }
 
 // Fonction pour ajouter un compte
 // Renvoie le compte créé, ou un message d'erreur (chaîne) si la saisie est invalide
-function ajouterCompte(libelle, idProprietaire, suffixeSymbole){
+function ajouterCompte(libelle, idProprietaire){
     if (!('listeComptes' in data)) data.listeComptes = []
 
     libelle = String(libelle).trim()
-    const suffixe = nettoyerSuffixeSymbole(suffixeSymbole)
-    const lettre = lettreProprietaire(idProprietaire)
-
-    if (libelle === '') return 'Le libellé du compte est obligatoire.'
-    if (lettre === '') return 'Le propriétaire du compte est invalide.'
-    if (idProprietaire === ID_JOINT && !jointDisponible()) return 'Un compte joint nécessite au moins deux utilisateurs.'
-    if (suffixe.length !== LONGUEUR_SUFFIXE_SYMBOLE) return `La partie du symbole après le point doit contenir exactement ${LONGUEUR_SUFFIXE_SYMBOLE} lettres.`
-
-    const symbole = `${lettre}.${suffixe}`
-    // Seul le symbole doit être unique (plusieurs comptes peuvent avoir le même libellé)
-    if (data.listeComptes.some(c => c.symbole === symbole)) return `Le symbole "${symbole}" est déjà utilisé.`
+    const erreur = validerCompte(libelle, idProprietaire)
+    if (erreur) return erreur
 
     // Recherche d'un ID disponible (on ignore les éventuels ID vides)
     const ids = data.listeComptes.map(c => Number(c.id)).filter(id => id > 0)
     const idNew = ids.length > 0 ? Math.max(...ids) + 1 : 1
 
-    const newCompte = { id: idNew, symbole: symbole, libelle: libelle, idProprietaire: idProprietaire }
+    const newCompte = { id: idNew, libelle: libelle, idProprietaire: idProprietaire }
     data.listeComptes.push(newCompte)
     return newCompte
 }
 
-// Pour les anciens fichiers sans propriétaire : on le déduit de la première lettre du symbole
-// "J" -> Joint (s'il y a plusieurs utilisateurs), sinon l'utilisateur dont le nom commence par cette lettre
-function completerProprietairesComptes(){
-    (data.listeComptes || []).forEach(compte => {
-        if (compte.id === '' || 'idProprietaire' in compte) return
-        const lettre = String(compte.symbole || '')[0]
-        if (!lettre) return
-        if (lettre === 'J' && jointDisponible()){
-            compte.idProprietaire = ID_JOINT
-            return
+// Modifie le libellé et/ou le propriétaire d'un compte (son id ne change pas,
+// les dépenses qui pointent dessus restent donc liées)
+// Renvoie true si la modification est faite, sinon un message d'erreur (chaîne)
+function modifierCompte(idCompte, libelle, idProprietaire){
+    idCompte = Number(idCompte)
+    const compte = (data.listeComptes || []).find(c => c.id === idCompte)
+    if (!compte) return 'Compte introuvable.'
+
+    libelle = String(libelle).trim()
+    const erreur = validerCompte(libelle, idProprietaire, idCompte)
+    if (erreur) return erreur
+
+    compte.libelle = libelle
+    compte.idProprietaire = idProprietaire
+    return true
+}
+
+// Anciens fichiers : les comptes avaient un symbole (ex : "J.CSL", "S.C").
+// Si le propriétaire manque, on le déduit de la première lettre de ce symbole
+// ("J" -> Joint, sinon l'utilisateur dont le nom commence par cette lettre),
+// puis on supprime le symbole, qui n'est plus utilisé.
+function migrerComptesSansSymbole(){
+    const initiale = texte => String(texte || '').normalize('NFD').replace(/[̀-ͯ]/g, '').charAt(0).toUpperCase()
+
+    ;(data.listeComptes || []).forEach(compte => {
+        if (!('symbole' in compte)) return
+
+        if (compte.id !== '' && !('idProprietaire' in compte)){
+            const lettre = initiale(compte.symbole)
+            if (lettre === 'J' && jointDisponible()){
+                compte.idProprietaire = ID_JOINT
+            }
+            else {
+                const candidats = utilisateursValides().filter(u => initiale(u.nom) === lettre)
+                if (candidats.length === 1) compte.idProprietaire = candidats[0].id
+            }
         }
-        const candidats = utilisateursValides().filter(u => lettreProprietaire(u.id) === lettre)
-        if (candidats.length === 1) compte.idProprietaire = candidats[0].id
+        delete compte.symbole
     })
 }
 
