@@ -3,14 +3,17 @@
 //   user:         [ { id, nom } ],
 //   listeComptes: [ { id, libelle, idProprietaire, principal } ],   (un seul principal par propriétaire)
 //   revenus:      [ { idProprietaire, montant } ],
-//   categories:   [ { id, nom, depenses: [ { id, libelle, montant, idComptePayeDepuis, idCharge } ] } ]
+//   categories:   [ { id, nom, depenses: [ { id, libelle, montant, idComptePayeDepuis, idCharge, idEnveloppe } ] } ],
+//   enveloppes:   [ { id, nom, idCompte, mouvements: [ { id, date: "AAAA-MM-JJ", libelle, montant } ] } ]
 // }
 // idProprietaire / idCharge : id d'un utilisateur, ou 0 pour "Joint"
+// idEnveloppe : enveloppe à créditer pour cette dépense, ou null si aucune
 let data = {
     user: [],
     listeComptes: [],
     revenus: [],
-    categories: []
+    categories: [],
+    enveloppes: []
 }
 
 // Vérifie qu'un objet lu dans un fichier a bien la structure attendue
@@ -21,7 +24,10 @@ function structureValide(d){
         && d.listeComptes.every(c => typeof c.principal === 'boolean')
         && Array.isArray(d.revenus)
         && Array.isArray(d.categories)
-        && d.categories.every(c => Array.isArray(c.depenses))
+        && d.categories.every(c => Array.isArray(c.depenses)
+            && c.depenses.every(dep => dep.idEnveloppe === null || typeof dep.idEnveloppe === 'number'))
+        && Array.isArray(d.enveloppes)
+        && d.enveloppes.every(e => Array.isArray(e.mouvements))
 }
 
 // On attend l'évenement correspondant à un fichier sélectionné

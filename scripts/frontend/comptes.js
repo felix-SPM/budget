@@ -151,6 +151,12 @@ function supprimerCompteDepuisListe(idCompte){
         alert(`Impossible de supprimer ce compte : il est utilisé par ${nb} dépense(s).`)
         return
     }
+    // Ainsi qu'un compte qui contient des enveloppes
+    const nbEnv = nbEnveloppesCompte(idCompte)
+    if (nbEnv > 0){
+        alert(`Impossible de supprimer ce compte : il contient ${nbEnv} enveloppe(s).`)
+        return
+    }
 
     if (suppressionCompte(idCompte)){
         majListeComptes()
@@ -189,4 +195,6 @@ function majListeComptes(){
     majFormulaireCompte()
     lucide.createIcons()
     majRepartition()
+    // Les enveloppes affichent l'intitulé des comptes
+    majEnveloppes()
 }

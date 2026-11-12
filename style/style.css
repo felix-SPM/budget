@@ -213,3 +213,65 @@ body::before {
 .defilementHorizontal{
     overflow-x: auto;
 }
+
+/* Enveloppes */
+.titreCompteEnveloppes{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 4px;
+}
+
+.titreEnveloppe{
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 6px 0;
+}
+
+.nomEnveloppe{
+    min-width: 180px;
+}
+
+.soldeEnveloppe{
+    min-width: 110px;
+    text-align: right;
+    margin-right: 8px;
+    font-weight: normal;
+}
+
+.tableMouvements{
+    margin: 0 0 12px 20px;
+}
+
+.tableMouvements td, .tableMouvements th{
+    padding: 2px 8px;
+}
+
+.inputLibelleMouvement{
+    width: 220px;
+}
+
+.inputMontantMouvement{
+    width: 160px;
+}
+
+.ajoutEnveloppe{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+#inputNewEnveloppe{
+    width: 200px;
+}
+
+/* Enveloppe associée à une dépense */
+.tdDepEnv{
+    white-space: nowrap;
+}
+
+.tdDepEnveloppe:disabled{
+    opacity: 0.5;
+}

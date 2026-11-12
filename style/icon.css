@@ -98,3 +98,14 @@
     color: goldenrod;
     fill: goldenrod;
 }
+
+.btnAddEnveloppe{
+    border: 0cm;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.btnAddEnveloppe svg{
+    width: 25px;
+    height: 25px;
+}

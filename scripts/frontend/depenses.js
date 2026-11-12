@@ -91,8 +91,50 @@ function lireSaisieDepense(ligne){
         libelle: ligne.querySelector('input.tdDepLib').value.trim(),
         montant: montant === '' ? NaN : Number(montant),
         idComptePayeDepuis: Number(ligne.querySelector('select.tdDepCompte').value),
-        idCharge: Number(ligne.querySelector('select.tdDepCharge').value)
+        idCharge: Number(ligne.querySelector('select.tdDepCharge').value),
+        // Enveloppe seulement si la case est cochée
+        idEnveloppe: ligne.querySelector('input.tdDepAvecEnv').checked
+            ? Number(ligne.querySelector('select.tdDepEnveloppe').value)
+            : null
     }
+}
+
+// Case "enveloppe" : active ou désactive la liste des enveloppes de la même ligne
+// Changement de compte : la liste ne propose que les enveloppes du compte choisi
+parentClick.addEventListener("change", (event) => {
+    if (event.target.matches('input.tdDepAvecEnv')){
+        event.target.closest('td').querySelector('select.tdDepEnveloppe').disabled = !event.target.checked
+    }
+    if (event.target.matches('select.tdDepCompte')){
+        const ligne = event.target.closest('tr')
+        ligne.querySelector('td.tdDepEnv').innerHTML = contenuCelluleEnveloppe(Number(event.target.value), null)
+    }
+})
+
+// Contenu de la cellule "Enveloppe" d'une ligne de saisie :
+// case à cocher + liste des enveloppes du compte idCompte (idEnveloppe présélectionnée)
+// S'il n'y a aucune enveloppe sur ce compte, la case est désactivée et un message l'indique
+function contenuCelluleEnveloppe(idCompte, idEnveloppe){
+    const enveloppes = enveloppesDuCompte(idCompte)
+    if (enveloppes.length === 0){
+        return `
+            <input class="tdDepAvecEnv" type="checkbox" disabled aria-label="Associer à une enveloppe">
+            <select class="tdDepEnveloppe" name="choixEnveloppe" disabled aria-label="Enveloppe">
+                <option value="">Pas d'enveloppe sur ce compte</option>
+            </select>`
+    }
+    const avecEnveloppe = enveloppes.some(e => e.id === idEnveloppe)
+    return `
+        <input class="tdDepAvecEnv" type="checkbox" ${avecEnveloppe ? 'checked' : ''} aria-label="Associer à une enveloppe" title="Associer à une enveloppe">
+        <select class="tdDepEnveloppe" name="choixEnveloppe" ${avecEnveloppe ? '' : 'disabled'} aria-label="Enveloppe">
+            ${enveloppes.map(e => `<option value="${e.id}"${e.id === idEnveloppe ? ' selected' : ''}>${echapperHTML(e.nom)}</option>`).join('')}
+        </select>`
+}
+
+// Nom de l'enveloppe associée à une dépense ("" si aucune)
+function nomEnveloppeDepense(depense){
+    const enveloppe = depense.idEnveloppe === null ? null : trouverEnveloppe(depense.idEnveloppe)
+    return enveloppe ? enveloppe.nom : ''
 }
 
 function ajouterDepenseDepuisLigne(cat, ligne){
@@ -155,6 +197,7 @@ function afficherContenu(idCategorie){
             <th>Montant</th>
             <th>Charge</th>
             <th>Compte</th>
+            <th>Enveloppe</th>
             <th>Actions</th>
         </tr>`
 
@@ -175,6 +218,7 @@ function afficherContenu(idCategorie){
             <td class="tdDepMon">${Number(depense.montant).toFixed(2)} €</td>
             <td class="tdDepCha">${echapperHTML(nomProprietaire(depense.idCharge))}</td>
             <td class="tdDepCom">${echapperHTML(intituleCompteParId(depense.idComptePayeDepuis))}</td>
+            <td class="tdDepEnv">${echapperHTML(nomEnveloppeDepense(depense))}</td>
             <td class="tdDepBut">
                 <button class="modifDep" aria-label="Modifier la dépense"><i data-lucide="pencil"></i></button>
                 <button class="suppDep" aria-label="Supprimer la dépense"><i data-lucide="circle-x"></i></button>
@@ -354,6 +398,12 @@ function cellulesSaisieDepense(depense = {}){
         return `<option value="${echapperHTML(entree.id)}"${selection(entree.id, depense.idComptePayeDepuis)}>${echapperHTML(intituleCompte(entree))}</option>`;
     }).join('');
 
+    // Compte affiché dans la liste : celui de la dépense, sinon le premier de la liste
+    const idCompte = depense.idComptePayeDepuis !== undefined
+        ? depense.idComptePayeDepuis
+        : (data.listeComptes.length > 0 ? data.listeComptes[0].id : null)
+    const idEnveloppe = depense.idEnveloppe !== undefined ? depense.idEnveloppe : null
+
     const libelle = depense.libelle !== undefined ? echapperHTML(depense.libelle) : ''
     const montant = depense.montant !== undefined ? echapperHTML(depense.montant) : ''
 
@@ -370,6 +420,7 @@ function cellulesSaisieDepense(depense = {}){
                 ${optionsComptes}
             </select>
         </td>
+        <td class="tdDepEnv">${contenuCelluleEnveloppe(idCompte, idEnveloppe)}</td>
     `
 }
 
