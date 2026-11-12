@@ -6,22 +6,51 @@ document.addEventListener('DOMContentLoaded', majRepartition)
 // Intitulé "propriétaire - compte" à partir de l'id d'un compte (défini dans comptes.js)
 const nomCompte = idCompte => echapperHTML(intituleCompteParId(idCompte))
 
-// Libellé seul d'un compte (sans le propriétaire)
-const libelleCompte = idCompte => echapperHTML(data.listeComptes.find(c => c.id === idCompte).libelle)
+// Le virement est-il coché comme fait ?
+const ligneVirementFait = v => virementFait(v.idDe, v.idVers) !== undefined
+
+// Si le virement a été fait pour un autre montant que celui calculé maintenant
+function avertissementMontant(v){
+    const fait = virementFait(v.idDe, v.idVers)
+    if (!fait || Math.abs(fait.montant - v.montant) < 0.005) return ''
+    return `fait pour ${formatMontant(fait.montant)} (écart ${formatMontant(v.montant - fait.montant)})`
+}
+
+// Case à cocher d'un virement : enregistrée dans les données
+zoneRepartition.addEventListener('change', (event)=>{
+    if (!event.target.matches('.caseVirement')) return
+    const c = event.target.dataset
+    marquerVirement(Number(c.de), Number(c.vers), Number(c.montant), event.target.checked)
+    majRepartition()
+})
+
+// Bouton "Tout décocher" (début d'un nouveau mois)
+zoneRepartition.addEventListener('click', (event)=>{
+    if (!event.target.closest('.btnToutDecocher')) return
+    if (!confirm('Décocher tous les virements ?')) return
+    toutDecocherVirements()
+    majRepartition()
+})
 
 // Tableau d'une liste de virements { idDe, idVers, montant }
-// origineSansProprietaire : n'affiche que le libellé du compte d'origine
-// (utile quand le titre de la section indique déjà à qui il appartient)
-function tableauVirements(virements, origineSansProprietaire = false){
+// idCompteSection : compte dont parle la section ("Virements depuis …") ; quand il est
+// l'origine du virement, il n'est pas répété (seule la flèche est affichée).
+// Un virement venant d'un autre compte (ex. utilisateur -> joint) garde son origine.
+function tableauVirements(virements, idCompteSection){
     if (virements.length === 0) return '<p class="messageVide">Aucun virement à faire.</p>'
     return `
         <table class="tableVirements">
             ${virements.map(v => `
-                <tr>
-                    <td>${origineSansProprietaire ? libelleCompte(v.idDe) : nomCompte(v.idDe)}</td>
+                <tr class="${ligneVirementFait(v) ? 'virementFait' : ''}">
+                    <td>
+                        <input class="caseVirement" type="checkbox" data-de="${v.idDe}" data-vers="${v.idVers}" data-montant="${v.montant}"
+                               ${ligneVirementFait(v) ? 'checked' : ''} aria-label="Virement fait" title="Virement fait">
+                    </td>
+                    <td>${v.idDe === idCompteSection ? '' : nomCompte(v.idDe)}</td>
                     <td class="flecheVirement"><i data-lucide="arrow-right"></i></td>
                     <td>${nomCompte(v.idVers)}</td>
                     <td class="montant">${formatMontant(v.montant)}</td>
+                    <td class="alerteRepartition">${avertissementMontant(v)}</td>
                 </tr>`).join('')}
         </table>`
 }
@@ -57,9 +86,14 @@ function majRepartition(){
             ${ligneMontant('Solde', r.revenusTotaux - r.depensesTotales, 'total')}
         </table>
 
+        ${data.virementsFaits.length > 0
+            ? `<p><button class="btnToutDecocher">Tout décocher</button>
+               <span class="explication">${data.virementsFaits.length} virement(s) coché(s) comme fait(s)</span></p>`
+            : ''}
+
         <h3>Virements depuis ${nomCompte(joint.idPrincipal)}</h3>
         <p class="explication">Tous les revenus arrivent sur ce compte.</p>
-        ${tableauVirements(joint.virements)}
+        ${tableauVirements(joint.virements, joint.idPrincipal)}
         <table class="tableSynthese">
             ${ligneMontant('Reste sur le compte', joint.resteSurPrincipal)}
             ${ligneMontant('Dépenses payées par ce compte', joint.payeParPrincipal)}
@@ -69,7 +103,7 @@ function majRepartition(){
         ${r.detailUtilisateurs.map(u => `
             <h3>Virements depuis ${nomCompte(u.idPrincipal)}</h3>
             <p class="explication">Ce compte reçoit ${formatMontant(u.virementRecu)} du compte joint.</p>
-            ${tableauVirements(u.virements, true)}
+            ${tableauVirements(u.virements, u.idPrincipal)}
             <table class="tableSynthese">
                 ${ligneMontant('Reste sur le compte', u.resteSurPrincipal)}
                 ${ligneMontant('Dépenses payées par ce compte', u.payeParPrincipal)}

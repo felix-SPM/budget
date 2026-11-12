@@ -115,6 +115,16 @@ function modifierCompte(idCompte, libelle, idProprietaire){
     return true
 }
 
+// Comptes triés par ordre alphabétique : d'abord sur le nom du propriétaire
+// ("Joint" compris), puis sur le libellé du compte (sans tenir compte des majuscules ni des accents)
+function comptesTries(){
+    const comparer = (a, b) => String(a).localeCompare(String(b), 'fr', { sensitivity: 'base' })
+    return [...data.listeComptes].sort((a, b) =>
+        comparer(nomProprietaire(a.idProprietaire), nomProprietaire(b.idProprietaire))
+        || comparer(a.libelle, b.libelle)
+    )
+}
+
 // Nombre de comptes appartenant à un utilisateur
 function nbComptesUtilisateur(idUtilisateur){
     return data.listeComptes.filter(c => c.idProprietaire === Number(idUtilisateur)).length
@@ -133,6 +143,8 @@ function suppressionCompte(idSupp){
 
     // Suppression de l'entrée par son numéro d'index
     data.listeComptes.splice(indexSupp, 1)
+    // Les virements cochés vers ou depuis ce compte n'ont plus lieu d'être
+    data.virementsFaits = data.virementsFaits.filter(v => v.idDe !== Number(idSupp) && v.idVers !== Number(idSupp))
     // Si c'était le compte principal, un autre compte du propriétaire le devient
     assurerComptesPrincipaux()
     return true

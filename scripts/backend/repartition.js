@@ -14,6 +14,27 @@
 // 5. Chaque compte principal d'utilisateur vire à ses autres comptes ce qu'ils paient ;
 //    ce qui lui reste, moins ce qu'il paie lui-même, est l'excédent de l'utilisateur.
 
+// ---------- Virements faits ----------
+// data.virementsFaits = [ { idDe, idVers, montant } ] : un virement est identifié par
+// ses comptes de départ et d'arrivée ; le montant est celui au moment où il a été coché
+// (s'il ne correspond plus au montant calculé, le budget a changé depuis).
+
+// Virement fait correspondant (undefined si le virement n'est pas coché)
+function virementFait(idDe, idVers){
+    return data.virementsFaits.find(v => v.idDe === idDe && v.idVers === idVers)
+}
+
+// Coche (fait = true) ou décoche un virement
+function marquerVirement(idDe, idVers, montant, fait){
+    data.virementsFaits = data.virementsFaits.filter(v => !(v.idDe === idDe && v.idVers === idVers))
+    if (fait) data.virementsFaits.push({ idDe, idVers, montant })
+}
+
+// Décoche tous les virements (nouveau mois)
+function toutDecocherVirements(){
+    data.virementsFaits = []
+}
+
 // Somme des montants d'une liste de dépenses
 function sommeMontants(depenses){
     return depenses.reduce((total, d) => total + d.montant, 0)

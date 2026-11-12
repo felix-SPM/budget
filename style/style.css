@@ -273,3 +273,16 @@ input.tdDepMon, .inputModifRevenu, .inputMontantMouvement{
 .tdDepPonct{
     text-align: center;
 }
+
+/* Virement coché comme fait */
+.tableVirements .virementFait td{
+    color: #888;
+}
+
+.tableVirements .virementFait td.montant{
+    text-decoration: line-through;
+}
+
+.btnToutDecocher{
+    cursor: pointer;
+}

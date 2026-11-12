@@ -4,7 +4,8 @@
 //   listeComptes: [ { id, libelle, idProprietaire, principal } ],   (un seul principal par propriétaire)
 //   revenus:      [ { idProprietaire, montant } ],
 //   categories:   [ { id, nom, depenses: [ { id, libelle, montant, idComptePayeDepuis, idCharge, idEnveloppe, ponctuelle } ] } ],
-//   enveloppes:   [ { id, nom, idCompte, mouvements: [ { id, date: "AAAA-MM-JJ", libelle, montant } ] } ]
+//   enveloppes:   [ { id, nom, idCompte, mouvements: [ { id, date: "AAAA-MM-JJ", libelle, montant } ] } ],
+//   virementsFaits: [ { idDe, idVers, montant } ]   (virements de la Répartition cochés comme faits)
 // }
 // idProprietaire / idCharge : id d'un utilisateur, ou 0 pour "Joint"
 // idEnveloppe : enveloppe à créditer pour cette dépense, ou null si aucune
@@ -14,7 +15,8 @@ let data = {
     listeComptes: [],
     revenus: [],
     categories: [],
-    enveloppes: []
+    enveloppes: [],
+    virementsFaits: []
 }
 
 // Vérifie qu'un objet lu dans un fichier a bien la structure attendue
@@ -30,6 +32,7 @@ function structureValide(d){
                 && typeof dep.ponctuelle === 'boolean'))
         && Array.isArray(d.enveloppes)
         && d.enveloppes.every(e => Array.isArray(e.mouvements))
+        && Array.isArray(d.virementsFaits)
 }
 
 // On attend l'évenement correspondant à un fichier sélectionné

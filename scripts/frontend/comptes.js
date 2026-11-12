@@ -170,7 +170,8 @@ function majListeComptes(){
     zone.innerHTML = ''
 
     const tabComptes = document.createElement('table')
-    data.listeComptes.forEach(compte => {
+    // Affichage trié par propriétaire puis par libellé (l'ordre des données ne change pas)
+    comptesTries().forEach(compte => {
         const trCompte = document.createElement('tr')
         trCompte.dataset.idcompte = compte.id
         trCompte.innerHTML = `
