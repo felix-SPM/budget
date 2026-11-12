@@ -5,7 +5,8 @@
 //   revenus:      [ { idProprietaire, montant } ],
 //   categories:   [ { id, nom, depenses: [ { id, libelle, montant, idComptePayeDepuis, idCharge, idEnveloppe, ponctuelle } ] } ],
 //   enveloppes:   [ { id, nom, idCompte, mouvements: [ { id, date: "AAAA-MM-JJ", libelle, montant } ] } ],
-//   virementsFaits: [ { idDe, idVers, montant } ]   (virements de la Répartition cochés comme faits)
+//   virementsFaits: [ { idDe, idVers, montant } ],   (virements de la Répartition cochés comme faits)
+//   cloture:      null (budget modifiable) ou { date, libelle, mouvements: [ { idEnveloppe, idMouvement } ] }
 // }
 // idProprietaire / idCharge : id d'un utilisateur, ou 0 pour "Joint"
 // idEnveloppe : enveloppe à créditer pour cette dépense, ou null si aucune
@@ -16,7 +17,8 @@ let data = {
     revenus: [],
     categories: [],
     enveloppes: [],
-    virementsFaits: []
+    virementsFaits: [],
+    cloture: null
 }
 
 // Vérifie qu'un objet lu dans un fichier a bien la structure attendue
@@ -33,6 +35,7 @@ function structureValide(d){
         && Array.isArray(d.enveloppes)
         && d.enveloppes.every(e => Array.isArray(e.mouvements))
         && Array.isArray(d.virementsFaits)
+        && (d.cloture === null || (typeof d.cloture === 'object' && Array.isArray(d.cloture.mouvements)))
 }
 
 // On attend l'évenement correspondant à un fichier sélectionné
@@ -70,6 +73,7 @@ document.getElementById('jsonFileInput').addEventListener('change', function (ev
     event.target.value = '';
 });
 
+// Enregistre les données actuelles dans "AAAAMMJJ - SoFixBudget.json"
 function enregistrerDataJSON() {
     // Récupération de la date actuelle
     const aujourdHui = new Date();
@@ -78,9 +82,12 @@ function enregistrerDataJSON() {
     const jour = String(aujourdHui.getDate()).padStart(2, '0');
     const mois = String(aujourdHui.getMonth() + 1).padStart(2, '0');
 
-    const nomFichier = `${annee}${mois}${jour} - SoFixBudget.json`;
+    telechargerJSON(data, `${annee}${mois}${jour} - SoFixBudget.json`);
+}
 
-    const contenuJSON = JSON.stringify(data, null, 2);
+// Fait télécharger un objet au format JSON sous le nom indiqué
+function telechargerJSON(objet, nomFichier) {
+    const contenuJSON = JSON.stringify(objet, null, 2);
     const blob = new Blob([contenuJSON], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
 

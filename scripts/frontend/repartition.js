@@ -63,6 +63,8 @@ function ligneMontant(libelle, montant, classe = ''){
 
 // Recalcule et affiche toute la section Répartition
 function majRepartition(){
+    // La section Clôture (total des provisions, verrouillage) dépend des mêmes données
+    majCloture()
     const r = calculRepartition()
 
     // Calcul impossible : on indique ce qu'il manque

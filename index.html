@@ -9,6 +9,7 @@
   <script src="./scripts/frontend/revenus.js" defer></script>
   <script src="./scripts/frontend/repartition.js" defer></script>
   <script src="./scripts/frontend/enveloppes.js" defer></script>
+  <script src="./scripts/frontend/cloture.js" defer></script>
   <script src="./scripts/frontend/depenses.js" defer></script>
   <script src="./scripts/frontend/utilisateurs.js" defer></script>
   <script src="./scripts/frontend/comptes.js" defer></script>
@@ -21,6 +22,7 @@
   <script src="./scripts/backend/categories.js" defer></script>
   <script src="./scripts/backend/repartition.js" defer></script>
   <script src="./scripts/backend/enveloppes.js" defer></script>
+  <script src="./scripts/backend/cloture.js" defer></script>
   <script src="./scripts/backend/backDepense.js" defer></script>
 </head>
 <body>
@@ -101,6 +103,13 @@
         <div class="ajoutEnveloppe">
             <select id="selectCompteEnveloppe" aria-label="Compte de la nouvelle enveloppe"></select>
             <input id="inputNewEnveloppe" type="text" placeholder="Nouvelle enveloppe"><button class="btnAddEnveloppe" aria-label="Ajouter l'enveloppe"><i data-lucide="circle-plus"></i></button>
+        </div>
+    </div>
+
+    <!-- PARTIE CLOTURE -->
+    <div class="partie">
+        <h2 class="titrePartie">Clôture du budget <i data-lucide="lock"></i></h2>
+        <div class="zoneCloture">
         </div>
     </div>
 

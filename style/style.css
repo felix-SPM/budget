@@ -286,3 +286,53 @@ input.tdDepMon, .inputModifRevenu, .inputMontantMouvement{
 .btnToutDecocher{
     cursor: pointer;
 }
+
+/* Clôture du budget */
+.formulaireCloture{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+}
+
+.boutonsCloture{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.boutonsCloture .btn-file{
+    border: none;
+    font: inherit;
+}
+
+.etatCloture{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: darkslateblue;
+}
+
+/* Budget verrouillé : tout ce qui permet de modifier est masqué */
+body.verrouille .btnAddUser, body.verrouille .modifUser, body.verrouille .suppUser,
+body.verrouille .btnAddCompte, body.verrouille .modifCompte, body.verrouille .suppCompte,
+body.verrouille .modifRevenu,
+body.verrouille .btnAddCategorie, body.verrouille .modifCat, body.verrouille .suppCat,
+body.verrouille .addDep, body.verrouille .modifDep, body.verrouille .suppDep,
+body.verrouille .btnAddEnveloppe,
+body.verrouille [data-action="modifierEnveloppe"], body.verrouille [data-action="supprimerEnveloppe"],
+body.verrouille [data-action="modifierMouvement"], body.verrouille [data-action="supprimerMouvement"],
+body.verrouille .ajoutUtilisateurs, body.verrouille .ajoutCompte,
+body.verrouille .ajoutCategorie, body.verrouille .ajoutEnveloppe,
+body.verrouille tr.input, body.verrouille tr.saisieMouvement{
+    display: none;
+}
+
+/* Étoile du compte principal et case "ponctuelle" : visibles mais non modifiables */
+body.verrouille .principalCompte, body.verrouille .basculePonctuelle{
+    pointer-events: none;
+}
+
+body.verrouille .basculePonctuelle{
+    opacity: 0.6;
+}
