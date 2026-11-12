@@ -71,13 +71,18 @@ function majFormulaireCompte(){
 
 // Clic dans la liste des comptes (modification, suppression)
 document.querySelector('.listeComptes').addEventListener('click', (event)=>{
-    const button = event.target.closest('.suppCompte, .modifCompte, .validModifCompte, .annulModifCompte')
+    const button = event.target.closest('.suppCompte, .modifCompte, .validModifCompte, .annulModifCompte, .principalCompte')
     if (!button) return
 
     const ligne = button.closest('tr')
     const idCompte = ligne.dataset.idcompte
 
     if (button.classList.contains('suppCompte')) supprimerCompteDepuisListe(idCompte)
+
+    // Étoile : désigne le compte principal (courant) de son propriétaire
+    if (button.classList.contains('principalCompte')){
+        if (definirComptePrincipal(idCompte)) majListeComptes()
+    }
 
     if (button.classList.contains('modifCompte')){
         // On réaffiche la liste pour annuler une éventuelle autre modification en cours
@@ -106,6 +111,7 @@ function passerCompteEnModification(idCompte){
 
     ligne.classList.add('edition')
     ligne.innerHTML = `
+        <td></td>
         <td class="proprietaireCompte">
             <select class="selectModifProprietaire" aria-label="Propriétaire du compte">${optionsProprietaires(compte.idProprietaire)}</select>
         </td>
@@ -162,6 +168,13 @@ function majListeComptes(){
         const trCompte = document.createElement('tr')
         trCompte.dataset.idcompte = compte.id
         trCompte.innerHTML = `
+            <td>
+                <button class="btnSupp principalCompte${compte.principal ? ' estPrincipal' : ''}"
+                        aria-label="${compte.principal ? 'Compte principal' : 'Définir comme compte principal'}"
+                        title="${compte.principal ? 'Compte principal (courant)' : 'Définir comme compte principal'}">
+                    <i data-lucide="star"></i>
+                </button>
+            </td>
             <td class="proprietaireCompte">${echapperHTML(nomProprietaire(compte.idProprietaire))}</td>
             <td class="ligneCompte">${echapperHTML(compte.libelle)}</td>
             <td>
@@ -175,4 +188,5 @@ function majListeComptes(){
 
     majFormulaireCompte()
     lucide.createIcons()
+    majRepartition()
 }

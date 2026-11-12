@@ -36,6 +36,7 @@ parentClick.addEventListener("click", (event) => {
         const entree = button.closest('tr')
         if (suppDepData(entree.dataset.identree, cat)){
             entree.remove()
+            majRepartition()
         }
     }
 
@@ -98,6 +99,7 @@ function ajouterDepenseDepuisLigne(cat, ligne){
     const resultat = ajoutDepData(cat, lireSaisieDepense(ligne))
     if (resultat === true){
         afficherContenu(cat)
+        majRepartition()
         // On replace le curseur dans le libellé pour enchaîner les saisies
         document.querySelector(`[data-idcategorie="${cat}"] tr.input input.tdDepLib`).focus()
     }
@@ -106,7 +108,10 @@ function ajouterDepenseDepuisLigne(cat, ligne){
 
 function validerModificationDepuisLigne(cat, ligne){
     const resultat = modifDepData(cat, ligne.dataset.identree, lireSaisieDepense(ligne))
-    if (resultat === true) afficherContenu(cat)
+    if (resultat === true){
+        afficherContenu(cat)
+        majRepartition()
+    }
     else alert(resultat)
 }
 
@@ -325,7 +330,10 @@ function supprimerCategorieDepuisBloc(bloc){
         : `Supprimer la catégorie "${cat.nom}" ?`
     if (!confirm(message)) return
 
-    if (supprimerCategorie(idCategorie)) bloc.remove()
+    if (supprimerCategorie(idCategorie)){
+        bloc.remove()
+        majRepartition()
+    }
 }
 
 // Construit les 4 cellules de saisie d'une dépense (libellé, montant, charge, compte)

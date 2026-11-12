@@ -88,3 +88,13 @@
     width: 25px;
     height: 25px;
 }
+
+/* Étoile du compte principal : pleine pour le compte principal, vide sinon */
+.principalCompte svg{
+    color: #bbb;
+}
+
+.principalCompte.estPrincipal svg{
+    color: goldenrod;
+    fill: goldenrod;
+}

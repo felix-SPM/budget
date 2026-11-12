@@ -1,5 +1,8 @@
-// Un compte : { id, libelle, idProprietaire }
-// idProprietaire = id d'un utilisateur, ou ID_JOINT pour un compte commun
+// Un compte : { id, libelle, idProprietaire, principal }
+// - idProprietaire = id d'un utilisateur, ou ID_JOINT pour un compte commun
+// - principal = true pour LE compte courant du propriétaire (un seul par propriétaire) :
+//   le compte principal Joint reçoit tous les revenus, celui d'un utilisateur reçoit
+//   le virement depuis le compte joint et alimente ses autres comptes (voir repartition.js)
 
 // Identifiant réservé au propriétaire "Joint" (compte commun à tous les utilisateurs)
 const ID_JOINT = 0
@@ -57,9 +60,37 @@ function ajouterCompte(libelle, idProprietaire){
     const ids = data.listeComptes.map(c => c.id)
     const idNew = ids.length > 0 ? Math.max(...ids) + 1 : 1
 
-    const newCompte = { id: idNew, libelle: libelle, idProprietaire: idProprietaire }
+    // Le premier compte d'un propriétaire devient son compte principal
+    const newCompte = { id: idNew, libelle: libelle, idProprietaire: idProprietaire, principal: false }
     data.listeComptes.push(newCompte)
+    assurerComptesPrincipaux()
     return newCompte
+}
+
+// Compte principal d'un propriétaire (undefined s'il n'a aucun compte)
+function comptePrincipal(idProprietaire){
+    return data.listeComptes.find(c => c.idProprietaire === idProprietaire && c.principal)
+}
+
+// Désigne un compte comme compte principal de son propriétaire
+function definirComptePrincipal(idCompte){
+    const compte = data.listeComptes.find(c => c.id === Number(idCompte))
+    if (!compte) return false
+    data.listeComptes
+        .filter(c => c.idProprietaire === compte.idProprietaire)
+        .forEach(c => c.principal = (c === compte))
+    return true
+}
+
+// Garantit que chaque propriétaire ayant au moins un compte en a exactement un principal :
+// on garde le premier marqué principal, sinon on désigne son premier compte
+function assurerComptesPrincipaux(){
+    const proprietaires = new Set(data.listeComptes.map(c => c.idProprietaire))
+    proprietaires.forEach(idProprietaire => {
+        const comptes = data.listeComptes.filter(c => c.idProprietaire === idProprietaire)
+        const principal = comptes.find(c => c.principal) || comptes[0]
+        comptes.forEach(c => c.principal = (c === principal))
+    })
 }
 
 // Modifie le libellé et/ou le propriétaire d'un compte (son id ne change pas,
@@ -74,8 +105,13 @@ function modifierCompte(idCompte, libelle, idProprietaire){
     const erreur = validerCompte(libelle, idProprietaire, idCompte)
     if (erreur) return erreur
 
+    // Changement de propriétaire : le compte ne peut pas rester principal chez le nouveau
+    // propriétaire s'il en a déjà un (assurerComptesPrincipaux tranche)
+    if (compte.idProprietaire !== idProprietaire) compte.principal = false
+
     compte.libelle = libelle
     compte.idProprietaire = idProprietaire
+    assurerComptesPrincipaux()
     return true
 }
 
@@ -96,7 +132,8 @@ function suppressionCompte(idSupp){
     if (indexSupp === -1) return false
 
     // Suppression de l'entrée par son numéro d'index
-    const supp = data.listeComptes.splice(indexSupp, 1)
-    // Si l'élément avec le bon id a été supprimé, TRUE est renvoyé
-    return supp.length > 0 && supp[0].id === Number(idSupp)
+    data.listeComptes.splice(indexSupp, 1)
+    // Si c'était le compte principal, un autre compte du propriétaire le devient
+    assurerComptesPrincipaux()
+    return true
 }

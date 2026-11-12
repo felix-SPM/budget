@@ -26,7 +26,8 @@ function supprimerRevenu(idProprietaire){
     data.revenus = data.revenus.filter(r => r.idProprietaire !== idProprietaire)
 }
 
-// Prorata des revenus individuels (hors revenus communs), en pourcentage
+// Prorata des revenus individuels (hors revenus communs), en pourcentage NON arrondi
+// (l'arrondi ne se fait qu'à l'affichage, pour ne pas fausser les calculs)
 // Renvoie [ { id, nom, part } ], ou null s'il y a moins de deux utilisateurs
 // ou si un utilisateur n'a pas de revenu saisi
 function calculProrata(){
@@ -42,6 +43,6 @@ function calculProrata(){
     return users.map((u, i) => ({
         id: u.id,
         nom: u.nom,
-        part: Math.round(montants[i] / total * 10000) / 100
+        part: montants[i] / total * 100
     }))
 }

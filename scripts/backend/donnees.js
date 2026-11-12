@@ -1,7 +1,7 @@
 // Structure des données (enregistrées telles quelles dans le fichier JSON) :
 // {
 //   user:         [ { id, nom } ],
-//   listeComptes: [ { id, libelle, idProprietaire } ],
+//   listeComptes: [ { id, libelle, idProprietaire, principal } ],   (un seul principal par propriétaire)
 //   revenus:      [ { idProprietaire, montant } ],
 //   categories:   [ { id, nom, depenses: [ { id, libelle, montant, idComptePayeDepuis, idCharge } ] } ]
 // }
@@ -18,6 +18,7 @@ function structureValide(d){
     return d !== null && typeof d === 'object'
         && Array.isArray(d.user)
         && Array.isArray(d.listeComptes)
+        && d.listeComptes.every(c => typeof c.principal === 'boolean')
         && Array.isArray(d.revenus)
         && Array.isArray(d.categories)
         && d.categories.every(c => Array.isArray(c.depenses))

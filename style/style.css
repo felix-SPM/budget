@@ -165,3 +165,51 @@ body::before {
 #inputNewCategorie{
     width: 200px;
 }
+
+/* Répartition */
+.zoneRepartition h3{
+    margin-bottom: 4px;
+}
+
+.explication{
+    margin-top: 0;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.tableVirements td, .tableSynthese td, .tableDetail td, .tableDetail th{
+    padding: 2px 8px;
+}
+
+.montant{
+    text-align: right;
+    white-space: nowrap;
+}
+
+.flecheVirement svg{
+    width: 15px;
+    height: 15px;
+    vertical-align: middle;
+}
+
+.tableSynthese .total td{
+    font-weight: bold;
+    border-top: 1px solid #999;
+}
+
+.tableDetail .total td{
+    font-weight: bold;
+    border-top: 1px solid #999;
+}
+
+.negatif{
+    color: firebrick;
+}
+
+.alerteRepartition, .erreursRepartition{
+    color: firebrick;
+}
+
+.defilementHorizontal{
+    overflow-x: auto;
+}

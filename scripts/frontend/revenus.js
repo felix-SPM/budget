@@ -89,6 +89,7 @@ function majRevenus(){
 
     majProrata()
     lucide.createIcons()
+    majRepartition()
 }
 
 // Affiche la part de chaque utilisateur dans le total des revenus individuels
@@ -97,6 +98,6 @@ function majProrata(){
     zoneProrata.innerHTML = prorata === null
         ? ''
         : '<h3>Prorata</h3>' + prorata
-            .map(p => `<div>${echapperHTML(p.nom)} : ${p.part.toLocaleString('fr-FR')} %</div>`)
+            .map(p => `<div>${echapperHTML(p.nom)} : ${p.part.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} %</div>`)
             .join('')
 }
