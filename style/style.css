@@ -52,8 +52,9 @@ body::before {
     width: 200px;
 }
 
-.tdDepMon{
-    width:200px;
+/* Champs de saisie d'un montant : largeur pour "99999.99" + les flèches du champ */
+input.tdDepMon, .inputModifRevenu, .inputMontantMouvement{
+    width: 11ch;
 }
 
 .boutonDonnees{
@@ -127,10 +128,6 @@ body::before {
     min-width: 120px;
     text-align: right;
     padding-right: 10px;
-}
-
-.inputModifRevenu{
-    width: 100px;
 }
 
 .nonSaisi, .messageVide{
@@ -250,10 +247,6 @@ body::before {
 
 .inputLibelleMouvement{
     width: 220px;
-}
-
-.inputMontantMouvement{
-    width: 160px;
 }
 
 .ajoutEnveloppe{

@@ -188,7 +188,7 @@ function cellulesSaisieMouvement(mouvement = {}){
     return `
         <td><input class="inputDateMouvement" type="date" value="${echapperHTML(mouvement.date || dateDuJour())}" aria-label="Date"></td>
         <td><input class="inputLibelleMouvement" type="text" value="${echapperHTML(mouvement.libelle || '')}" placeholder="Libellé" aria-label="Libellé"></td>
-        <td><input class="inputMontantMouvement" type="number" step="0.01" value="${mouvement.montant !== undefined ? echapperHTML(mouvement.montant) : ''}" placeholder="+ provision / − dépense" aria-label="Montant"></td>
+        <td><input class="inputMontantMouvement" type="number" step="0.01" value="${mouvement.montant !== undefined ? echapperHTML(mouvement.montant) : ''}" placeholder="± montant" title="Positif pour une provision, négatif pour une dépense" aria-label="Montant"></td>
     `
 }
 
