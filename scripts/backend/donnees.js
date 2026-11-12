@@ -3,11 +3,12 @@
 //   user:         [ { id, nom } ],
 //   listeComptes: [ { id, libelle, idProprietaire, principal } ],   (un seul principal par propriétaire)
 //   revenus:      [ { idProprietaire, montant } ],
-//   categories:   [ { id, nom, depenses: [ { id, libelle, montant, idComptePayeDepuis, idCharge, idEnveloppe } ] } ],
+//   categories:   [ { id, nom, depenses: [ { id, libelle, montant, idComptePayeDepuis, idCharge, idEnveloppe, ponctuelle } ] } ],
 //   enveloppes:   [ { id, nom, idCompte, mouvements: [ { id, date: "AAAA-MM-JJ", libelle, montant } ] } ]
 // }
 // idProprietaire / idCharge : id d'un utilisateur, ou 0 pour "Joint"
 // idEnveloppe : enveloppe à créditer pour cette dépense, ou null si aucune
+// ponctuelle : true pour une dépense exceptionnelle (non récurrente)
 let data = {
     user: [],
     listeComptes: [],
@@ -25,7 +26,8 @@ function structureValide(d){
         && Array.isArray(d.revenus)
         && Array.isArray(d.categories)
         && d.categories.every(c => Array.isArray(c.depenses)
-            && c.depenses.every(dep => dep.idEnveloppe === null || typeof dep.idEnveloppe === 'number'))
+            && c.depenses.every(dep => (dep.idEnveloppe === null || typeof dep.idEnveloppe === 'number')
+                && typeof dep.ponctuelle === 'boolean'))
         && Array.isArray(d.enveloppes)
         && d.enveloppes.every(e => Array.isArray(e.mouvements))
 }

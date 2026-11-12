@@ -95,13 +95,22 @@ function lireSaisieDepense(ligne){
         // Enveloppe seulement si la case est cochée
         idEnveloppe: ligne.querySelector('input.tdDepAvecEnv').checked
             ? Number(ligne.querySelector('select.tdDepEnveloppe').value)
-            : null
+            : null,
+        ponctuelle: ligne.querySelector('input.tdDepPonctuelle').checked
     }
 }
 
 // Case "enveloppe" : active ou désactive la liste des enveloppes de la même ligne
 // Changement de compte : la liste ne propose que les enveloppes du compte choisi
 parentClick.addEventListener("change", (event) => {
+    // Case "ponctuelle" d'une dépense affichée : enregistrée immédiatement
+    if (event.target.matches('input.basculePonctuelle')){
+        const ligne = event.target.closest('tr')
+        const cat = Number(ligne.closest('.categorieDepense').dataset.idcategorie)
+        if (!definirDepensePonctuelle(cat, ligne.dataset.identree, event.target.checked)){
+            event.target.checked = !event.target.checked
+        }
+    }
     if (event.target.matches('input.tdDepAvecEnv')){
         event.target.closest('td').querySelector('select.tdDepEnveloppe').disabled = !event.target.checked
     }
@@ -198,6 +207,7 @@ function afficherContenu(idCategorie){
             <th>Charge</th>
             <th>Compte</th>
             <th>Enveloppe</th>
+            <th>Ponctuelle</th>
             <th>Actions</th>
         </tr>`
 
@@ -219,6 +229,10 @@ function afficherContenu(idCategorie){
             <td class="tdDepCha">${echapperHTML(nomProprietaire(depense.idCharge))}</td>
             <td class="tdDepCom">${echapperHTML(intituleCompteParId(depense.idComptePayeDepuis))}</td>
             <td class="tdDepEnv">${echapperHTML(nomEnveloppeDepense(depense))}</td>
+            <td class="tdDepPonct">
+                <input class="basculePonctuelle" type="checkbox" ${depense.ponctuelle ? 'checked' : ''}
+                       aria-label="Dépense ponctuelle" title="Dépense ponctuelle">
+            </td>
             <td class="tdDepBut">
                 <button class="modifDep" aria-label="Modifier la dépense"><i data-lucide="pencil"></i></button>
                 <button class="suppDep" aria-label="Supprimer la dépense"><i data-lucide="circle-x"></i></button>
@@ -421,6 +435,10 @@ function cellulesSaisieDepense(depense = {}){
             </select>
         </td>
         <td class="tdDepEnv">${contenuCelluleEnveloppe(idCompte, idEnveloppe)}</td>
+        <td class="tdDepPonct">
+            <input class="tdDepPonctuelle" type="checkbox" ${depense.ponctuelle ? 'checked' : ''}
+                   aria-label="Dépense ponctuelle" title="Dépense ponctuelle">
+        </td>
     `
 }
 

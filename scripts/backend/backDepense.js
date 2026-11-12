@@ -1,9 +1,10 @@
-// Dépense : { id, libelle, montant, idComptePayeDepuis, idCharge, idEnveloppe }
+// Dépense : { id, libelle, montant, idComptePayeDepuis, idCharge, idEnveloppe, ponctuelle }
 // - stockée dans la liste "depenses" de sa catégorie (id unique dans la catégorie)
 // - idComptePayeDepuis : id du compte qui paie
 // - idCharge : id de l'utilisateur à qui la dépense est à charge, ou ID_JOINT (0) pour "Joint"
 // - idEnveloppe : enveloppe à créditer de ce montant une fois le budget validé, ou null ;
 //   l'enveloppe doit se trouver sur le compte qui paie la dépense
+// - ponctuelle : true pour une dépense exceptionnelle (non récurrente)
 
 // Fonction qui supprime une dépense avec idEntree dans la catégorie idCategorie
 function suppDepData(idEntree, idCategorie){
@@ -38,7 +39,7 @@ function validerDepense(valeurs){
 }
 
 // Ajoute une dépense dans une catégorie
-// valeurs = { libelle, montant, idComptePayeDepuis, idCharge, idEnveloppe }
+// valeurs = { libelle, montant, idComptePayeDepuis, idCharge, idEnveloppe, ponctuelle }
 // Renvoie true si l'ajout est fait, sinon un message d'erreur (chaîne)
 function ajoutDepData(idCategorie, valeurs){
     const categorie = trouverCategorie(idCategorie)
@@ -56,7 +57,8 @@ function ajoutDepData(idCategorie, valeurs){
         montant: valeurs.montant,
         idComptePayeDepuis: valeurs.idComptePayeDepuis,
         idCharge: valeurs.idCharge,
-        idEnveloppe: valeurs.idEnveloppe
+        idEnveloppe: valeurs.idEnveloppe,
+        ponctuelle: valeurs.ponctuelle === true
     })
     return true
 }
@@ -78,5 +80,16 @@ function modifDepData(idCategorie, idEntree, valeurs){
     depense.idComptePayeDepuis = valeurs.idComptePayeDepuis
     depense.idCharge = valeurs.idCharge
     depense.idEnveloppe = valeurs.idEnveloppe
+    depense.ponctuelle = valeurs.ponctuelle === true
+    return true
+}
+
+// Coche / décoche "ponctuelle" sur une dépense. Renvoie true si c'est fait
+function definirDepensePonctuelle(idCategorie, idEntree, ponctuelle){
+    const categorie = trouverCategorie(idCategorie)
+    if (!categorie) return false
+    const depense = categorie.depenses.find(d => d.id === Number(idEntree))
+    if (!depense) return false
+    depense.ponctuelle = ponctuelle === true
     return true
 }

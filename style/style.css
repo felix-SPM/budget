@@ -268,3 +268,8 @@ input.tdDepMon, .inputModifRevenu, .inputMontantMouvement{
 .tdDepEnveloppe:disabled{
     opacity: 0.5;
 }
+
+/* Case "dépense ponctuelle" centrée dans sa colonne */
+.tdDepPonct{
+    text-align: center;
+}
