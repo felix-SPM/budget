@@ -1,0 +1,14 @@
+# Fichiers exclus du contexte de construction Docker :
+# seuls index.html, style/, scripts/, img/ et docker/ sont utiles à l'image.
+.git
+.gitignore
+.DS_Store
+**/.DS_Store
+.dockerignore
+Dockerfile
+compose.yaml
+README.md
+outils
+
+# Par précaution : jamais de fichier de sauvegarde du budget dans l'image
+*.json

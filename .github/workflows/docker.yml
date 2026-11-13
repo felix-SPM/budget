@@ -1,0 +1,124 @@
+# Construction et publication de l'image Docker de SoFix Budget
+# sur GitHub Container Registry : ghcr.io/felix-spm/budget
+#
+# - À chaque étiquette de version (v1.1, v2.0...) : image construite pour Intel (amd64)
+#   et ARM (arm64), testée, puis publiée avec les tags 1.1, 1 et latest.
+#   (L'étiquette doit être posée sur un commit qui contient le Dockerfile.)
+# - À chaque envoi sur la branche "docker" : image construite, testée, puis publiée
+#   sous le tag de TEST "docker" (ghcr.io/felix-spm/budget:docker) ; "latest" reste
+#   réservé aux versions officielles.
+# - Proposition de fusion vers main, ou lancement manuel depuis l'onglet "Actions" :
+#   image construite et testée, mais PAS publiée.
+
+name: Image Docker
+
+on:
+  push:
+    tags: ["v*"]
+    branches: ["docker"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+# Droits minimaux : lire le code, écrire dans le registre d'images du dépôt
+permissions:
+  contents: read
+  packages: write
+
+env:
+  # Nom de l'image (le registre exige des minuscules)
+  IMAGE: ghcr.io/felix-spm/budget
+
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v7
+
+      # ---------- Test : l'image démarre et sert le site correctement ----------
+
+      - name: Préparation de Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Construction de l'image de test (amd64)
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          load: true
+          tags: sofix-budget:test
+
+      - name: Test du conteneur (mêmes options que compose.yaml)
+        run: |
+          docker run -d --name test -p 8080:8080 \
+            --read-only --tmpfs /tmp --tmpfs /var/cache/nginx \
+            --security-opt no-new-privileges:true \
+            sofix-budget:test
+          # Attente du démarrage de nginx
+          for i in $(seq 1 20); do
+            curl -sf -o /dev/null http://127.0.0.1:8080/ && break
+            sleep 1
+          done
+          verifier() {   # verifier <chemin> <code HTTP attendu>
+            code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:8080$1")
+            echo "$1 -> $code (attendu $2)"
+            [ "$code" = "$2" ]
+          }
+          verifier /                              200
+          verifier /index.html                    200
+          verifier /scripts/backend/cloture.js    200
+          verifier /style/style.css               200
+          verifier /img/background.png            200
+          verifier /.git/config                   404
+          verifier /README.md                     404
+          verifier /outils/serveur.py             404
+          # Le numéro de version doit être présent dans la page
+          curl -s http://127.0.0.1:8080/scripts/frontend/init.js | grep -q "VERSION_APPLICATION"
+
+      - name: Journal du conteneur (en cas d'échec)
+        if: failure()
+        run: docker logs test
+
+      # ---------- Publication (envoi d'une étiquette de version ou sur la branche docker) ----------
+
+      - name: Émulation ARM (pour l'image arm64)
+        if: github.event_name == 'push'
+        uses: docker/setup-qemu-action@v4
+
+      - name: Connexion à GitHub Container Registry
+        if: github.event_name == 'push'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tags et descriptions de l'image
+        if: github.event_name == 'push'
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.IMAGE }}
+          # Étiquette v1.2 -> tags 1.2, 1 et latest (les étiquettes du projet sont
+          # de la forme vX.Y, sans 3e chiffre : on extrait les numéros directement).
+          # Branche docker -> tag de test "docker" (jamais "latest").
+          flavor: |
+            latest=false
+          tags: |
+            type=match,pattern=v(\d+(\.\d+)*),group=1
+            type=match,pattern=v(\d+),group=1
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+            type=ref,event=branch
+          labels: |
+            org.opencontainers.image.title=SoFix Budget
+            org.opencontainers.image.description=Gestion du budget mensuel d'un foyer (site web servi par nginx)
+
+      - name: Construction multi-processeurs et publication
+        if: github.event_name == 'push'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

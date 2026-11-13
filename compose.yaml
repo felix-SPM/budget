@@ -1,0 +1,24 @@
+# Lancement de SoFix Budget avec Docker Compose :
+#   docker compose up -d        (construit l'image si besoin et démarre le conteneur)
+#   docker compose up -d --build   (après une modification du site)
+#   docker compose down         (arrêt)
+#
+# Le site est ensuite accessible sur http://127.0.0.1:8080
+# (et depuis le réseau local sur http://<adresse-IP-de-la-machine>:8080).
+
+services:
+  sofix-budget:
+    build: .
+    image: sofix-budget:latest
+    container_name: sofix-budget
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    # Le conteneur ne fait que servir des fichiers : système de fichiers en lecture seule,
+    # sauf les dossiers temporaires dont nginx a besoin
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+    security_opt:
+      - no-new-privileges:true
