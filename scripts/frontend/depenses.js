@@ -264,6 +264,24 @@ function masquerContenu(idCategorie){
     zone.innerHTML=""
 }
 
+// Déplie ou replie toutes les catégories
+// (une catégorie déjà dépliée n'est pas redessinée : une saisie en cours y est conservée)
+function deplierToutesCategories(ouvrir){
+    document.querySelectorAll('.categorieDepense').forEach(bloc => {
+        if ((bloc.dataset.ouverte === 'oui') === ouvrir) return
+        const cat = Number(bloc.dataset.idcategorie)
+        if (ouvrir) afficherContenu(cat)
+        else masquerContenu(cat)
+        bloc.dataset.ouverte = ouvrir ? 'oui' : 'non'
+        afficherTitreCategorie(bloc)
+    })
+}
+
+document.querySelector('.controlesDepenses').addEventListener('click', (event)=>{
+    if (event.target.closest('.toutDeplierCat')) deplierToutesCategories(true)
+    if (event.target.closest('.toutReplierCat')) deplierToutesCategories(false)
+})
+
 function creerDivCategories(){
     //Récupération de l'objet DOM correspondant aux dépenses
     const zone = document.querySelector("div.zoneDepenses")

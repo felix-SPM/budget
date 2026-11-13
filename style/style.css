@@ -135,11 +135,43 @@ input.tdDepMon, .inputModifRevenu, .inputMontantMouvement{
     color: #888;
 }
 
-/* Titre d'une catégorie de dépenses : nom + boutons */
-.titreCategorie{
-    display: flex;
+/* Catégories de dépenses : une grille commune à toutes les catégories
+   (nom | déplier | modifier | supprimer | reste), partagée via "subgrid" :
+   la colonne des noms prend la largeur du nom le plus long,
+   donc les boutons sont alignés d'une catégorie à l'autre */
+.zoneDepenses{
+    display: grid;
+    grid-template-columns: max-content repeat(3, auto) 1fr;
+}
+
+.categorieDepense, .titreCategorie{
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
     align-items: center;
-    gap: 4px;
+}
+
+.titreCategorie{
+    column-gap: 4px;
+}
+
+.categorieDepense .contenu{
+    grid-column: 1 / -1;
+}
+
+/* Titres des colonnes alignés à gauche, comme les valeurs */
+.categorieDepense .contenu th, .tableMouvements th{
+    text-align: left;
+}
+
+/* Boutons "Tout développer" / "Tout réduire" */
+.controlesDepenses{
+    display: flex;
+    margin-bottom: 4px;
+}
+
+.controlesCompteEnveloppes{
+    display: inline-flex;
 }
 
 .nomCategorie{
@@ -392,6 +424,11 @@ body.verrouille .basculePonctuelle{
     /* Titres des catégories et des enveloppes : grille dont la 1re colonne (le nom)
        prend la place restante ; les boutons ont chacun leur colonne à droite,
        donc ils sont alignés d'une catégorie (ou d'une enveloppe) à l'autre */
+    /* La grille commune des catégories est abandonnée : chaque titre a la sienne */
+    .zoneDepenses, .categorieDepense{
+        display: block;
+    }
+
     .titreCategorie, .titreEnveloppe{
         display: grid;
         align-items: center;
