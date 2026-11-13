@@ -44,6 +44,32 @@ Les adresses à ouvrir s'affichent au démarrage :
 
 Arrêt du serveur : Ctrl + C.
 
+### Avec Docker
+
+Le site peut aussi tourner dans un conteneur Docker (serveur nginx), sur toute machine
+disposant de Docker et de Docker Compose (processeur Intel ou ARM) :
+
+```sh
+docker compose up -d            # construit l'image et démarre le conteneur
+docker compose up -d --build    # après une modification du site
+docker compose down             # arrêt
+```
+
+Ou directement avec l'image publiée sur GitHub Container Registry (sans récupérer le code) :
+
+```sh
+docker run -d -p 8080:8080 --restart unless-stopped --name sofix-budget ghcr.io/felix-spm/budget:latest
+```
+
+L'image est construite, testée et publiée automatiquement par GitHub Actions à chaque
+étiquette de version (`vX.Y`), pour les processeurs Intel et ARM
+(voir `.github/workflows/docker.yml`).
+
+Le site est alors accessible sur http://127.0.0.1:8080, et depuis le réseau local sur
+`http://<adresse-IP-de-la-machine>:8080`. Le conteneur redémarre automatiquement avec
+Docker. Il ne contient que le site : les fichiers de sauvegarde restent sur l'appareil
+qui les ouvre.
+
 ## Organisation du code
 
 ```
@@ -52,6 +78,7 @@ style/                  feuilles de style (style.css, icon.css)
 scripts/backend/        données et calculs (aucun accès à la page)
 scripts/frontend/       affichage et gestion des clics / saisies
 outils/serveur.py       serveur local de développement
+Dockerfile, compose.yaml, docker/   image Docker (nginx) du site
 ```
 
 La structure complète du fichier de sauvegarde est décrite en tête de
