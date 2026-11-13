@@ -4,7 +4,7 @@ Application web de gestion du budget mensuel d'un foyer : revenus, dépenses, r�
 des virements entre les comptes et suivi des enveloppes d'épargne.
 Elle remplace le classeur Excel « Budget » utilisé jusqu'ici, avec les mêmes calculs.
 
-**Version actuelle : 1.0**
+**Version actuelle : 1.1**
 
 ## Fonctionnalités
 
@@ -182,6 +182,13 @@ La structure complète du fichier de sauvegarde est décrite en tête de
 `scripts/backend/donnees.js`. Un fichier qui ne la respecte pas est refusé au chargement.
 
 ## Historique des versions
+
+### 1.1 — novembre 2026
+
+Dockerisation : le site peut tourner dans un conteneur Docker (nginx), lancé avec
+`docker compose` ou directement depuis l'image publiée `ghcr.io/felix-spm/budget`
+(processeurs Intel et ARM). L'image est construite, testée et publiée automatiquement
+par GitHub Actions à chaque version. Aucune modification du fonctionnement du site.
 
 ### 1.0 — novembre 2026
 
