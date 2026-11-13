@@ -65,6 +65,11 @@ L'image est construite, testée et publiée automatiquement par GitHub Actions �
 étiquette de version (`vX.Y`), pour les processeurs Intel et ARM
 (voir `.github/workflows/docker.yml`).
 
+Tags disponibles :
+- `latest`, `1`, `1.1`… : versions officielles (`latest` = la plus récente) ;
+- `docker` : version **de test**, reconstruite à chaque envoi sur la branche `docker`.
+  Pour essayer une modification avant sa fusion : `image: ghcr.io/felix-spm/budget:docker`.
+
 Le site est alors accessible sur http://127.0.0.1:8080, et depuis le réseau local sur
 `http://<adresse-IP-de-la-machine>:8080`. Le conteneur redémarre automatiquement avec
 Docker. Il ne contient que le site : les fichiers de sauvegarde restent sur l'appareil
