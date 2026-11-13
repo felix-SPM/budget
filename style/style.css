@@ -336,3 +336,194 @@ body.verrouille .principalCompte, body.verrouille .basculePonctuelle{
 body.verrouille .basculePonctuelle{
     opacity: 0.6;
 }
+
+/* ===================== Petits écrans (téléphone) ===================== */
+@media (max-width: 700px){
+
+    /* Sections en pleine largeur, avec une marge de 8 px de chaque côté */
+    .partie{
+        width: auto;
+        margin: 8px;
+        padding-left: 8px;
+        padding-right: 8px;
+        padding-bottom: 20px;
+    }
+
+    /* Titre de l'application plus compact */
+    .titreApp{
+        font-size: x-large;
+        padding-top: 16px;
+        padding-bottom: 16px;
+        gap: 10px;
+    }
+
+    .titreApp svg{
+        width: 36px;
+        height: 36px;
+    }
+
+    .titrePartie{
+        flex-wrap: wrap;
+        font-size: 1.25em;
+    }
+
+    /* Les tableaux défilent horizontalement dans leur zone, sans élargir la page */
+    .contenu, .listeUtilisateurs, .listeComptes, .zoneRevenus,
+    .zoneRepartition, .zoneEnveloppes, .defilementHorizontal{
+        overflow-x: auto;
+    }
+
+    /* Boutons "Choisir un fichier" / "Enregistrer" / clôture : l'un sous l'autre */
+    .boutonDonnees, .boutonsCloture{
+        flex-direction: column;
+    }
+
+    .btn-file{
+        width: auto;
+        align-self: stretch;
+    }
+
+    /* Formulaires d'ajout : passage à la ligne si nécessaire, champs limités à l'écran */
+    .ajoutUtilisateurs, .ajoutCompte, .ajoutCategorie, .ajoutEnveloppe,
+    .titreCompteEnveloppes, .formulaireCloture{
+        flex-wrap: wrap;
+    }
+
+    /* Titres des catégories et des enveloppes : grille dont la 1re colonne (le nom)
+       prend la place restante ; les boutons ont chacun leur colonne à droite,
+       donc ils sont alignés d'une catégorie (ou d'une enveloppe) à l'autre */
+    .titreCategorie, .titreEnveloppe{
+        display: grid;
+        align-items: center;
+        column-gap: 2px;
+    }
+
+    /* Catégorie : nom | déplier | modifier | supprimer */
+    .titreCategorie{
+        grid-template-columns: minmax(0, 1fr) repeat(3, 36px);
+    }
+
+    /* Enveloppe : nom | solde | déplier | modifier | supprimer */
+    .titreEnveloppe{
+        grid-template-columns: minmax(0, 1fr) auto repeat(3, 36px);
+    }
+
+    /* Le nom passe à la ligne dans sa colonne s'il est trop long */
+    .nomCategorie, .nomEnveloppe{
+        margin-right: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .titreEnveloppe .soldeEnveloppe{
+        min-width: 0;
+        margin-right: 4px;
+    }
+
+    /* En cours de renommage, le champ (et la liste des comptes d'une enveloppe)
+       prend toute la largeur, les boutons valider / annuler restent alignés à droite */
+    .titreCategorie:has(.inputModifCategorie){
+        grid-template-columns: minmax(0, 1fr) repeat(2, 36px);
+    }
+
+    .titreEnveloppe:has(.inputModifEnveloppe){
+        grid-template-columns: minmax(0, 1fr) repeat(2, 36px);
+    }
+
+    .titreEnveloppe .selectModifCompteEnveloppe{
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .inputModifCategorie, .inputModifEnveloppe, .selectModifCompteEnveloppe{
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    #inputNewUtilisateur, #inputNewCompte, #inputNewCategorie, #inputNewEnveloppe,
+    .inputModifCategorie, .inputLibelleMouvement, .tdDepLib,
+    .partie select{
+        max-width: 100%;
+    }
+
+    .nomEnveloppe{
+        min-width: 0;
+    }
+
+    /* Mouvements d'une enveloppe : chaque mouvement sur deux lignes, sans défilement horizontal
+         ligne 1 : libellé ............ montant
+         ligne 2 : date ............... boutons            */
+    .tableMouvements, .tableMouvements tbody{
+        display: block;
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .tableMouvements thead{
+        display: none;
+    }
+
+    .tableMouvements tr{
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas:
+            "libelle montant"
+            "date    actions";
+        align-items: center;
+        column-gap: 8px;
+        padding: 6px 0;
+        border-bottom: 1px solid #dde3ea;
+    }
+
+    .tableMouvements td{
+        padding: 0;
+    }
+
+    .tableMouvements .mvtLibelle{ grid-area: libelle; overflow-wrap: anywhere; }
+    .tableMouvements .mvtMontant{ grid-area: montant; text-align: right; }
+    .tableMouvements .mvtDate{ grid-area: date; color: #555; font-size: 0.9em; }
+    .tableMouvements .mvtActions{ grid-area: actions; justify-self: end; }
+
+    /* Ligne de saisie (ajout ou modification) :
+         ligne 1 : libellé (toute la largeur)
+         ligne 2 : date | montant | boutons      */
+    .tableMouvements tr.saisieMouvement, .tableMouvements tr.edition{
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+        grid-template-areas:
+            "libelle libelle libelle"
+            "date    montant actions";
+        row-gap: 6px;
+    }
+
+    .tableMouvements tr.saisieMouvement .mvtMontant,
+    .tableMouvements tr.edition .mvtMontant{
+        text-align: left;
+    }
+
+    /* Les champs occupent toute leur case */
+    .inputDateMouvement, .inputLibelleMouvement, .inputMontantMouvement{
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Icônes cliquables : zone tactile d'au moins 36 px */
+    .partie button:not(.btn-file){
+        min-width: 36px;
+        min-height: 36px;
+    }
+
+    .partie button:not(.btn-file) svg{
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Cases à cocher plus faciles à toucher */
+    .partie input[type="checkbox"]{
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/* Boutons d'action d'un mouvement d'enveloppe : toujours sur une seule ligne */
+.mvtActions{
+    white-space: nowrap;
+}

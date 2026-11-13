@@ -186,9 +186,9 @@ function validerModificationMouvement(idEnveloppe, ligne){
 // Cellules de saisie d'un mouvement (pré-remplies pour une modification)
 function cellulesSaisieMouvement(mouvement = {}){
     return `
-        <td><input class="inputDateMouvement" type="date" value="${echapperHTML(mouvement.date || dateDuJour())}" aria-label="Date"></td>
-        <td><input class="inputLibelleMouvement" type="text" value="${echapperHTML(mouvement.libelle || '')}" placeholder="Libellé" aria-label="Libellé"></td>
-        <td><input class="inputMontantMouvement" type="number" step="0.01" value="${mouvement.montant !== undefined ? echapperHTML(mouvement.montant) : ''}" placeholder="± montant" title="Positif pour une provision, négatif pour une dépense" aria-label="Montant"></td>
+        <td class="mvtDate"><input class="inputDateMouvement" type="date" value="${echapperHTML(mouvement.date || dateDuJour())}" aria-label="Date"></td>
+        <td class="mvtLibelle"><input class="inputLibelleMouvement" type="text" value="${echapperHTML(mouvement.libelle || '')}" placeholder="Libellé" aria-label="Libellé"></td>
+        <td class="mvtMontant"><input class="inputMontantMouvement" type="number" step="0.01" value="${mouvement.montant !== undefined ? echapperHTML(mouvement.montant) : ''}" placeholder="± montant" title="Positif pour une provision, négatif pour une dépense" aria-label="Montant"></td>
     `
 }
 
@@ -227,15 +227,15 @@ function tableauMouvements(enveloppe){
             return `
                 <tr class="edition" data-idmouvement="${m.id}">
                     ${cellulesSaisieMouvement(m)}
-                    <td>${bouton('validerMouvement', 'circle-check', 'Valider')}${bouton('annulerMouvement', 'undo-2', 'Annuler')}</td>
+                    <td class="mvtActions">${bouton('validerMouvement', 'circle-check', 'Valider')}${bouton('annulerMouvement', 'undo-2', 'Annuler')}</td>
                 </tr>`
         }
         return `
             <tr data-idmouvement="${m.id}">
-                <td>${formatDate(m.date)}</td>
-                <td>${echapperHTML(m.libelle)}</td>
-                <td class="montant${m.montant < 0 ? ' negatif' : ''}">${formatMontant(m.montant)}</td>
-                <td>${bouton('modifierMouvement', 'pencil', 'Modifier')}${bouton('supprimerMouvement', 'circle-x', 'Supprimer')}</td>
+                <td class="mvtDate">${formatDate(m.date)}</td>
+                <td class="mvtLibelle">${echapperHTML(m.libelle)}</td>
+                <td class="mvtMontant montant${m.montant < 0 ? ' negatif' : ''}">${formatMontant(m.montant)}</td>
+                <td class="mvtActions">${bouton('modifierMouvement', 'pencil', 'Modifier')}${bouton('supprimerMouvement', 'circle-x', 'Supprimer')}</td>
             </tr>`
     }).join('')
 
@@ -246,7 +246,7 @@ function tableauMouvements(enveloppe){
                 ${lignes}
                 <tr class="saisieMouvement">
                     ${cellulesSaisieMouvement()}
-                    <td>${bouton('ajouterMouvement', 'circle-plus', 'Ajouter le mouvement')}</td>
+                    <td class="mvtActions">${bouton('ajouterMouvement', 'circle-plus', 'Ajouter le mouvement')}</td>
                 </tr>
             </tbody>
         </table>`
