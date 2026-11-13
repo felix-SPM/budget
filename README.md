@@ -4,7 +4,7 @@ Application web de gestion du budget mensuel d'un foyer : revenus, dépenses, r�
 des virements entre les comptes et suivi des enveloppes d'épargne.
 Elle remplace le classeur Excel « Budget » utilisé jusqu'ici, avec les mêmes calculs.
 
-**Version actuelle : 1.2**
+**Version actuelle : 1.3**
 
 ## Fonctionnalités
 
@@ -17,13 +17,15 @@ Elle remplace le classeur Excel « Budget » utilisé jusqu'ici, avec les mêmes
 - **Revenus** : une ligne par utilisateur (et Joint), prorata calculé automatiquement.
 - **Dépenses** : par catégorie (création, renommage, suppression, tri alphabétique), avec
   le compte qui paie, la personne à qui la dépense est à charge, l'enveloppe éventuelle à
-  alimenter et une case « ponctuelle ».
+  alimenter et une case « ponctuelle ». Toutes les catégories se déplient ou se replient
+  d'un clic.
 - **Répartition** : liste des virements mensuels à faire. Tous les revenus arrivent sur le
   compte principal Joint, les dépenses communes sont réparties au prorata des revenus, puis
   chaque compte principal alimente les autres comptes de son propriétaire. Les virements
   peuvent être cochés comme faits.
 - **Enveloppes** : sommes mises de côté sur un compte, avec leurs mouvements datés
-  (provisions et dépenses) et leur solde.
+  (provisions et dépenses) et leur solde ; dépliage / repliage de toutes les enveloppes
+  d'un compte.
 - **Clôture du budget** : ajoute aux enveloppes les provisions issues des dépenses, verrouille
   le budget, télécharge une sauvegarde complète, puis permet de générer le fichier du mois
   suivant (dépenses ponctuelles retirées, virements décochés).
@@ -67,7 +69,7 @@ L'image est construite, testée et publiée automatiquement par GitHub Actions �
 (voir `.github/workflows/docker.yml`).
 
 Tags disponibles :
-- `latest`, `1`, `1.2`… : versions officielles (`latest` = la plus récente) ;
+- `latest`, `1`, `1.3`… : versions officielles (`latest` = la plus récente) ;
 - `docker` : version **de test**, reconstruite à chaque envoi sur la branche `docker`.
   Pour essayer une modification avant sa fusion : `image: ghcr.io/felix-spm/budget:docker`.
 
@@ -100,7 +102,7 @@ services:
   sofix-budget:                       # nom du service (libre)
 
     # Image à utiliser : "latest" = dernière version publiée.
-    # Pour figer une version : ghcr.io/felix-spm/budget:1.2 (ou :1 = dernière 1.x)
+    # Pour figer une version : ghcr.io/felix-spm/budget:1.3 (ou :1 = dernière 1.x)
     image: ghcr.io/felix-spm/budget:latest
 
     container_name: sofix-budget      # nom affiché par "docker ps"
@@ -183,6 +185,12 @@ La structure complète du fichier de sauvegarde est décrite en tête de
 `scripts/backend/donnees.js`. Un fichier qui ne la respecte pas est refusé au chargement.
 
 ## Historique des versions
+
+### 1.3 — novembre 2026
+
+Dépenses : icônes « Tout développer » / « Tout réduire » en tête de section, et boutons des
+catégories alignés d'une catégorie à l'autre. Enveloppes : mêmes icônes devant chaque
+compte. Titres des colonnes des tableaux alignés à gauche.
 
 ### 1.2 — novembre 2026
 
