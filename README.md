@@ -4,7 +4,7 @@ Application web de gestion du budget mensuel d'un foyer : revenus, dépenses, r�
 des virements entre les comptes et suivi des enveloppes d'épargne.
 Elle remplace le classeur Excel « Budget » utilisé jusqu'ici, avec les mêmes calculs.
 
-**Version actuelle : 1.1**
+**Version actuelle : 1.2**
 
 ## Fonctionnalités
 
@@ -27,7 +27,8 @@ Elle remplace le classeur Excel « Budget » utilisé jusqu'ici, avec les mêmes
 - **Clôture du budget** : ajoute aux enveloppes les provisions issues des dépenses, verrouille
   le budget, télécharge une sauvegarde complète, puis permet de générer le fichier du mois
   suivant (dépenses ponctuelles retirées, virements décochés).
-- **Affichage adapté au téléphone**.
+- **Affichage adapté au téléphone**, avec une icône pour l'onglet du navigateur et pour le
+  raccourci sur l'écran d'accueil iOS.
 
 ## Lancer le site
 
@@ -66,7 +67,7 @@ L'image est construite, testée et publiée automatiquement par GitHub Actions �
 (voir `.github/workflows/docker.yml`).
 
 Tags disponibles :
-- `latest`, `1`, `1.1`… : versions officielles (`latest` = la plus récente) ;
+- `latest`, `1`, `1.2`… : versions officielles (`latest` = la plus récente) ;
 - `docker` : version **de test**, reconstruite à chaque envoi sur la branche `docker`.
   Pour essayer une modification avant sa fusion : `image: ghcr.io/felix-spm/budget:docker`.
 
@@ -99,7 +100,7 @@ services:
   sofix-budget:                       # nom du service (libre)
 
     # Image à utiliser : "latest" = dernière version publiée.
-    # Pour figer une version : ghcr.io/felix-spm/budget:1.1 (ou :1 = dernière 1.x)
+    # Pour figer une version : ghcr.io/felix-spm/budget:1.2 (ou :1 = dernière 1.x)
     image: ghcr.io/felix-spm/budget:latest
 
     container_name: sofix-budget      # nom affiché par "docker ps"
@@ -182,6 +183,11 @@ La structure complète du fichier de sauvegarde est décrite en tête de
 `scripts/backend/donnees.js`. Un fichier qui ne la respecte pas est refusé au chargement.
 
 ## Historique des versions
+
+### 1.2 — novembre 2026
+
+Icône du site : affichée dans l'onglet du navigateur et sur l'écran d'accueil iOS quand
+le site y est ajouté en raccourci (nommé « Budget »).
 
 ### 1.1 — novembre 2026
 
