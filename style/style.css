@@ -527,3 +527,11 @@ body.verrouille .basculePonctuelle{
 .mvtActions{
     white-space: nowrap;
 }
+
+/* Pied de page : numéro de version */
+.piedDePage{
+    text-align: center;
+    color: #777;
+    font-size: 0.85em;
+    padding: 16px 0 24px;
+}

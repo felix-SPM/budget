@@ -1,5 +1,12 @@
 // Fichier contenant les fonctions d'initialisation de la page
 
+// Version de l'application (affichée en bas de la page) : à mettre à jour à chaque nouvelle version
+const VERSION_APPLICATION = '1.0'
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelector('.numeroVersion').textContent = VERSION_APPLICATION
+})
+
 function initFront(){
     creerDivCategories()
     // (met aussi à jour les comptes et les revenus)
