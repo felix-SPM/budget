@@ -69,6 +69,7 @@ jobs:
           verifier /scripts/backend/cloture.js    200
           verifier /style/style.css               200
           verifier /img/background.png            200
+          verifier /img/icones/apple-touch-icon.png 200
           verifier /.git/config                   404
           verifier /README.md                     404
           verifier /outils/serveur.py             404
