@@ -56,6 +56,17 @@ inputNewEnveloppe.addEventListener('keydown', (event)=>{
 zoneEnveloppes.addEventListener('click', (event)=>{
     const button = event.target.closest('button')
     if (!button) return
+
+    // Tout déplier / tout replier les enveloppes d'un compte
+    if (button.dataset.action === 'toutDeplierCompte' || button.dataset.action === 'toutReplierCompte'){
+        enveloppesDuCompte(Number(button.dataset.idcompte)).forEach(e => {
+            if (button.dataset.action === 'toutDeplierCompte') enveloppesOuvertes.add(e.id)
+            else enveloppesOuvertes.delete(e.id)
+        })
+        majEnveloppes()
+        return
+    }
+
     const bloc = button.closest('.enveloppe')
     const idEnveloppe = Number(bloc.dataset.idenveloppe)
     const ligne = button.closest('tr')
@@ -276,6 +287,10 @@ function majEnveloppes(){
             const total = enveloppes.reduce((t, e) => t + soldeEnveloppe(e), 0)
             return `
                 <h3 class="titreCompteEnveloppes">
+                    <span class="controlesCompteEnveloppes">
+                        <button class="btnSupp" data-action="toutDeplierCompte" data-idcompte="${compte.id}" aria-label="Tout développer" title="Tout développer"><i data-lucide="chevrons-up-down"></i></button>
+                        <button class="btnSupp" data-action="toutReplierCompte" data-idcompte="${compte.id}" aria-label="Tout réduire" title="Tout réduire"><i data-lucide="chevrons-down-up"></i></button>
+                    </span>
                     Dans ${echapperHTML(intituleCompte(compte))}
                     <span class="soldeEnveloppe">${formatMontant(total)}</span>
                 </h3>
